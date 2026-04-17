@@ -1,5 +1,8 @@
 <script>
   import Nav from "$lib/Nav.svelte";
+  import { PUBLIC_HACKCLUB_AUTH } from '$env/static/public';
+  let clientId = PUBLIC_HACKCLUB_AUTH;
+  let authUrl = `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcallback`
 </script>
 
 <Nav />
@@ -28,7 +31,7 @@
               placeholder="Enter your Email"
               class="h-10 w-100 border border-red-500 mt-5 rounded-l-md text-gray-400 pl-2 outline-none"
             />
-            <a href="https://rsvp.hackclub.community/alchemize-ysws" target="_blank">
+            <a href={authUrl} >
               <button class="h-10 w-28 bg-red-600 text-gray-200 font-bold border border-red-600 mt-5 hover:bg-red-500 ml-1 text-md">
               Get Started
             </button>
