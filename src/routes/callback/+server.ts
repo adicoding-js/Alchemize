@@ -1,19 +1,24 @@
 import { env } from '$env/dynamic/private';
 import { error, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { jwtDecode } from 'jwt-decode';
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const code = url.searchParams.get('code');
 
 	if (!code) {
 		throw error(400, 'Missing authorization code');
 	}
-
+	const airtableClient = env.AIRTABLE_CLIENT;
+	const airtableSecret = env.AIRTABLE;
 	const clientId = env.HACKCLUB_AUTH;
 	const clientSecret = env.HACKCLUB_SECRET;
 	const redirectUri = env.HACKCLUB_REDIRECT;
 
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, 'Missing OAuth environment variables');
+	}
+		if (!airtableClient || !airtableSecret) {
+		throw error(500, 'Missing Airtable environment variables');
 	}
 
 	const tokenResponse = await fetch('https://auth.hackclub.com/oauth/token', {
@@ -35,7 +40,62 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (!tokenResponse.ok) {
 		throw error(tokenResponse.status, tokenBody?.message ?? 'Token exchange failed');
 	}
-
+	const airtableUserRecordId = cookies.get('airtable_user_record_id');
+	if (!airtableUserRecordId) {
+		//Check Database for user with email fro tokenBody.id_token, if not found, create new user and set cookie with new record id, if found, set cookie with existing record id
+		const decodedToken: any = jwtDecode(tokenBody.id_token);
+		const email = decodedToken?.email;
+		if (!email) {
+			throw error(400, 'Email not found in ID token');
+		}
+		const airtableResponse = await fetch(`https://api.airtable.com/v0/${airtableClient}/Users?filterByFormula={email}="${encodeURIComponent(email)}"`, {
+			headers: {
+				Authorization: `Bearer ${airtableSecret}`
+			}
+		});
+		const airtableData = await airtableResponse.json();
+		if (!airtableResponse.ok) {
+			throw error(airtableResponse.status, airtableData?.message ?? 'Failed to fetch user from Airtable');
+		}
+		let userRecordId: string;
+		if (airtableData.records.length === 0) {
+			// Create new user
+			const createResponse = await fetch(`https://api.airtable.com/v0/${airtableClient}/Users`, {
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${airtableSecret}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					fields: {
+						userid: decodedToken.sub,
+						email: decodedToken.email,
+						hackatime: "",
+						currency: `{
+							"redstone": 0,
+							"glowstone": 0,
+							"aqua_regia": 0,
+							"potion_mix": 0,
+						}`,
+					}
+				})
+			});
+			const createData = await createResponse.json();
+			if (!createResponse.ok) {
+				console.log(createData)
+				throw error(createResponse.status, createData?.message ?? 'Failed to create user in Airtable');
+			}
+			userRecordId = createData.id;
+		} else {
+			userRecordId = airtableData.records[0].id;
+		}
+		cookies.set('airtable_user_record_id', userRecordId, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+			path: '/'
+		});
+	}
 	cookies.set('access_token', tokenBody.access_token, {
 		httpOnly: true,
 		secure: true,
