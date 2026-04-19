@@ -2,3 +2,4 @@
 
 [x] When user is logged in for first time add an entry for them in Database
 [x] Implement Airtable Database for storing user data and project data
+[] Complete Landing Page
