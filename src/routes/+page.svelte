@@ -289,6 +289,10 @@
 			grid-template-columns: 1fr !important;
 		}
 	}
+	.card{
+		position: relative;
+		z-index: 10;
+	}
 	.card:hover {
 		box-shadow: 0px 0px 10px 2px #ff0000 !important;
 	}
