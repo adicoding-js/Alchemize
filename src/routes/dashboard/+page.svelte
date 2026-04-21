@@ -30,6 +30,6 @@
 </main>
 <style>
 .grad-bg{
-    background: #000000ad;
+    background: #000000;
 }
 </style>
