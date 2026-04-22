@@ -1,13 +1,13 @@
 <div class="w-20 h-screen"></div>
 <div class="absolute left-0  sidenav h-screen w-20 overflow-hidden grad-bg gap-10 border-r-[#3b0202] border-r-1 flex flex-col  pt-4 items-center">
 <div class="item mb-20">
-    <img src="./Alchemist.webp" alt="" class="h-14 w-14 aspect-square max-w-14">
+    <img src="/Alchemist.webp" alt="" class="h-14 w-14 aspect-square max-w-14">
     <h1 class="font alchemizefont text-[#ff2e2e] text-4xl w-20 ml-2 font-bold">Alchemize</h1>
 </div>
-<div class="item">
+<a class="item" href="/dashboard/projects">
     <i class="fa-solid fa-code text-4xl w-10"></i>
     <h1 class="font text-3xl w-20">Projects</h1>
-</div>
+</a>
 <div class="item">
     <i class="fa-solid fa-bag-shopping text-4xl w-10"></i>
     <h1 class="font text-3xl w-20">Shop</h1>
