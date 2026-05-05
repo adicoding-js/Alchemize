@@ -21,15 +21,63 @@
     })
     
 </script>
-<main class="root h-full w-full grad-bg flex items-center justify-center text-white flex-col">
-    <h1 class="text-4xl">Hello {name}!</h1>
-    <h2 class="text-xl">{email}</h2>
-    <h2 class="text-md">Unfortunately, the dashboard is still work in progress.</h2>
-    <h2 class="text-sm">Dr Alchistant knows your email hehe</h2>
+<main class="root  grad-bg flex items-center justify-center text-white flex-col relative -z-10">
+    <div class="image-container">
+        <div class="stage">
+            <img src="/dashStatic/dashboard_bg.png" alt="background" class="background-image" />
+            <img src="/dashStatic/Exchange.png" alt="overlay" class="overlay-image" />
+        </div>
 
+    </div>
 </main>
 <style>
-.grad-bg{
+.grad-bg {
     background: #000000;
+}
+.root{
+    width: 100%;
+    height: 100vh;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2752px;
+    height: 1536px;
+    transform-origin: top left;
+    transform: scale(calc(100vh / 1536px));
+}
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: left;
+}
+
+
+
+.overlay-image {
+    width: auto;
+    height: 445px;
+}
+.overlay-image{
+    position: absolute;
+    top: 730px;
+    left: 680px;
+}
+.overlay-image:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
 }
 </style>
