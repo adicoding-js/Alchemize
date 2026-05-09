@@ -90,7 +90,7 @@
 				>
 					<div
 						class="bg-primary h-full transition-all duration-1000"
-						style="width: {(rsvpCount / 300) * 100}%"
+						style="width: {((typeof rsvpCount === 'string' ? 289 : rsvpCount) / 300) * 100}%"
 					></div>
 				</div>
 				<p class="text-red-200/50 text-sm">
