@@ -2,17 +2,15 @@ import type { Actions, PageServerLoad } from './$types';
 import { AIRTABLE, AIRTABLE_CLIENT } from '$env/static/private';
 import { jwtDecode } from 'jwt-decode';
 import { env } from '$env/dynamic/private';
+import { getDataFromAccessToken } from '$lib/utils';
 export const actions = {
 	create: async (event) => {
 
-        // Get id-token cookie and extract email
-        const idToken = event.cookies.get('id_token');
-        if (!idToken) {
-            return { error: 'No id-token found' };
+        const accessToken = event.cookies.get('access_token');
+        if (!accessToken) {
+            return { error: 'No access token found' };
         }
-        
-        const decodedToken = jwtDecode<{ email: string }>(idToken);
-        const email = decodedToken.email;
+        const email = (await getDataFromAccessToken(accessToken)).email;
         const formData = await event.request.formData();
         const projectName = formData.get('name') as string;
         const projectDescription = formData.get('description') as string;
@@ -78,14 +76,11 @@ export const actions = {
 	},
     update: async (event) => {
         		
-        // Get id-token cookie and extract email
-        const idToken = event.cookies.get('id_token');
-        if (!idToken) {
-            return { error: 'No id-token found' };
+   const accessToken = event.cookies.get('access_token');
+        if (!accessToken) {
+            return { error: 'No access token found' };
         }
-        
-        const decodedToken = jwtDecode<{ email: string }>(idToken);
-        const email = decodedToken.email;
+        const email = (await getDataFromAccessToken(accessToken)).email;
         const formData = await event.request.formData();
         const projectName = formData.get('name') as string;
         const projectDescription = formData.get('description') as string;
@@ -151,7 +146,11 @@ export const actions = {
     }
 } satisfies Actions;
 export const load:PageServerLoad = async ({cookies})=>{
-    let userIdToken = cookies.get('id_token');
+       const accessToken = cookies.get('access_token');
+        if (!accessToken) {
+            return { error: 'No access token found' };
+        }
+        const email = (await getDataFromAccessToken(accessToken)).email;
     let hackatimeAccessToken = cookies.get('hackatime_token');
     let hacks = ""
     if (hackatimeAccessToken) {
@@ -166,13 +165,11 @@ export const load:PageServerLoad = async ({cookies})=>{
         
     }
 
-    if (!userIdToken) {
+    if (!accessToken) {
         return {
             projects: []
         }
     }
-    const decodedToken = jwtDecode<{ email: string }>(userIdToken);
-    const email = decodedToken.email;
     let projectsResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Projects?filterByFormula={owner}="${encodeURIComponent(email)}"`, {
         headers: {
             Authorization: `Bearer ${AIRTABLE}`,

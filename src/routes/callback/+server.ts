@@ -146,15 +146,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		maxAge: 60 * 60 * 24 * 30 * 12,
 	})
 
-	if (tokenBody.id_token) {
-		cookies.set("id_token", tokenBody.id_token, {
-			httpOnly: false,
-			secure: true,
-			sameSite: "lax",
-			path: "/",
-			maxAge: 60 * 60 * 24 * 30 * 12,
-		})
-	}
+
 	cookies.set("hackatime_verified", "true", {
 		httpOnly: false,
 		secure: true,

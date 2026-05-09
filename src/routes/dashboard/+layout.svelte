@@ -1,15 +1,22 @@
 <script lang="ts">
 	import Sidenav from "$lib/components/sidenav.svelte"
 	import { navigating } from "$app/stores"
-
-	let { children, data } = $props()
-	const isAllowed = $derived(data?.allowed ?? false)
+	import { browser } from "$app/environment"
 	import {
 		PUBLIC_HACKATIME_AUTH,
 		PUBLIC_HACKATIME_REDIRECT,
+		PUBLIC_HACKCLUB_AUTH,
+		PUBLIC_HACKCLUB_REDIRECT
 	} from "$env/static/public"
+
+	let { children, data } = $props()
+	const isAllowed = $derived(data?.allowed ?? false)
+	const reLogin = $derived(data?.relogin ?? false)
+	const reHackatime = $derived(data?.reHackatime ?? false)
+	const hackatimeAuthUrl = `https://hackatime.hackclub.com/oauth/authorize?client_id=${PUBLIC_HACKATIME_AUTH}&redirect_uri=${encodeURIComponent(PUBLIC_HACKATIME_REDIRECT)}&response_type=code&scope=profile+read`
+	const authUrl = `https://auth.hackclub.com/oauth/authorize?client_id=${PUBLIC_HACKCLUB_AUTH}&response_type=code&scope=openid+profile+email&redirect_uri=${encodeURIComponent(PUBLIC_HACKCLUB_REDIRECT)}`
 	let unVerified = $state(true)
-	if (typeof document !== "undefined") {
+	if (browser) {
 		const hackatimeVerifiedCookie = document.cookie
 			.split("; ")
 			.find(row => row.startsWith("hackatime_verified="))
@@ -18,6 +25,7 @@
 		}
 	}
 	console.log(isAllowed)
+
 </script>
 
 <svelte:head><link rel="icon" href="/Alchemist.webp" /></svelte:head>
@@ -56,9 +64,7 @@
 			<br />
 			<a
 				class="button w-60 h-20 flex items-center justify-center border border-dashed border-red-600 rounded-xl"
-				href="https://hackatime.hackclub.com/oauth/authorize?client_id={PUBLIC_HACKATIME_AUTH}&redirect_uri={encodeURIComponent(
-					PUBLIC_HACKATIME_REDIRECT
-				)}&response_type=code&scope=profile+read"
+				href={hackatimeAuthUrl}
 				target="_blank">Login Via Hackatime</a
 			>
 		</div>
