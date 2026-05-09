@@ -3,6 +3,7 @@ import type { LayoutServerLoad } from './$types';
 import { getDataFromAccessToken } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { PUBLIC_HACKATIME_AUTH, PUBLIC_HACKATIME_REDIRECT, PUBLIC_HACKCLUB_AUTH, PUBLIC_HACKCLUB_REDIRECT } from '$env/static/public';
+import {ALLOWED_EMAILS} from '$env/static/private';
 export const load: LayoutServerLoad = async ({ cookies }) => {
     //Check if any user cookies is not present/ invalid, if so make the user relogin
     const accessToken = cookies.get('access_token');
@@ -28,13 +29,8 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
                 reHackatime:true,
             }
     }
-    const allowedEmails = [
-        "utkarshchandel2012@gmail.com",
-        "aoishikkhan@gmail.com",
-        "prajwal.uppalapati@gmail.com",
-        "mahasankarshant@gmail.com"
-    ]
-    
+    const allowedEmails = ALLOWED_EMAILS.split(',').map((email: string) => email.trim());
+
     const email = (await getDataFromAccessToken(accessToken ?? "")).email;
     if (!email || !allowedEmails.includes(email)) {
         return {
