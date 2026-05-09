@@ -7,7 +7,8 @@
 		PUBLIC_HACKCLUB_REDIRECT,
 	} from "$env/static/public"
 	import Accordion from "$lib/components/accordion.svelte"
-	let { data } = $props()
+	let rsvpCount: number | "Fetching" = $state("Fetching")
+
 
 	const clientId = PUBLIC_HACKCLUB_AUTH
 	const uri = encodeURIComponent(PUBLIC_HACKCLUB_REDIRECT)
@@ -21,6 +22,8 @@
 		: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email&redirect_uri=${uri}`
 
 	onMount(() => {
+	fetch("/rsvp").then(res => res.json()).then(data => rsvpCount = data.count)
+
 		const blob = document.getElementById("blob")
 
 		const handleMouseMove = (event: MouseEvent) => {
@@ -87,11 +90,11 @@
 				>
 					<div
 						class="bg-primary h-full transition-all duration-1000"
-						style="width: {(data.rsvpCount / 300) * 100}%"
+						style="width: {(rsvpCount / 300) * 100}%"
 					></div>
 				</div>
 				<p class="text-red-200/50 text-sm">
-					{data.rsvpCount} / 300 RSVPs so far
+					{rsvpCount} / 300 RSVPs so far
 				</p>
 			</div>
 

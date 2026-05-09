@@ -4,7 +4,6 @@ import { jwtDecode } from 'jwt-decode';
 
 export const load: LayoutServerLoad = async ({cookies}) => {
 	const allowedEmails = [
-        "utkarshchandel2012@gmail.com",
         "aoishikkhan@gmail.com",
         "prajwal.uppalapati@gmail.com",
         "mahasankarshant@gmail.com"
