@@ -274,12 +274,12 @@
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
 			/>
 		</section>
-		<div class="w-screen leading-none -mt-[30vw] z-10">
+		<div class="w-screen leading-none -mt-[30vw] z-10 h-auto">
 			<svg
 				width="100%"
 				height="100%"
 				id="svg"
-				viewBox="0 0 1440 590"
+				viewBox="0 0 1440 470"
 				xmlns="http://www.w3.org/2000/svg"
 				class="transition duration-300 ease-in-out delay-150"
 				><path
@@ -291,8 +291,35 @@
 					class="transition-all duration-300 ease-in-out delay-150 path-1"
 				></path></svg
 			>
-			<footer class="w-full px-20 absolute bottom-6">
-				Made By TheUtkarsh8939 and Coolcream with ❤️
+			<footer class="w-full px-20 absolute items-center flex  bg-[#1a0000] pb-10 gap-16 justify-around">
+				<div class="row1 flex flex-col gap-5 w-33">
+					<h3 class="text-3xl font-semibold font-alchemize">Hackclub</h3>
+					<ul class="flex list-none flex-col gap-4">
+						<li><a href="https://hackclub.com/philosophy/">Philosphy</a></li>
+						<li><a href="https://hackclub.com/team/">Team and Board</a></li>
+						<li><a href="https://hackclub.com/brand/">Brand Guide</a></li>
+						<li><a href="https://hackclub.com/philanthropy/">Donate</a></li>
+						<li><a href="https://hackclub.com/imprint/">Imprint</a></li>
+
+						
+					</ul>
+				</div>
+				<div class="midrow flex flex-col gap-4">
+					<h2>Made by TheUtkarsh8939 and Coolcream with love 💖</h2>
+					<h2>© Hackclub, All rights reserved</h2>
+
+				</div>
+								<div class="row2 flex flex-col gap-5 w-43">
+					<h3 class="text-3xl font-semibold font-alchemize">Resources</h3>
+					<ul class="flex list-none flex-col gap-4">
+						<li><a href="https://hackclub.com/philosophy/">Community Events</a></li>
+						<li><a href="https://hackclub.com/team/">Jams</a></li>
+						<li><a href="https://hackclub.com/https://toolbox.hackclub.com/">Toolbox</a></li>
+						<li><a href="https://hackclub.com/conduct/">Code of Conduct</a></li>
+						<li><a href="https://hackclub.com/privacy/">Privacy Policy</a></li>
+
+					</ul>
+				</div>
 			</footer>
 		</div>
 	</main>
