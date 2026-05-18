@@ -27,7 +27,7 @@
 			class="content w-[clamp(120px,90vw,1084px)] border-red-950 border-r border-l border-b px-5 pb-6 bg-[#1a000083] rounded-b-lg"
 			transition:slide={{ duration: 300 }}
 		>
-			<p class="text-lg mt-4">{@html Content}</p>
+			<li class="text-lg pt-3 ml-6 border-t-2">{@html Content}</li>
 		</div>
 	{/if}
 </div>

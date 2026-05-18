@@ -257,28 +257,33 @@
 		>
 			<h2 class="font-alchemize text-center section-title text-3xl">FAQ</h2>
 			<Accordion
-				Title="What can you ship?"
-				Content="You can Ship any project, it can be general or a theme based"
+				Title="What is a 'ship'?"
+				Content="A 'ship' is the project you submit to this event. You can ship any general project or a project releted to one of the <a class='text-chart-5 p-1 hover:bg-primary/80 transition rounded hover:text-white' href='#themes'>themes</a>"
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans  relative z-10"
 			/>
 			<Accordion
 				Title="How do I participate?"
-				Content="Just Click on Get Started"
+				Content="Just Click on Get Started button on the home page or click on <a class='text-chart-5 p-1 hover:bg-primary/80 transition rounded hover:text-white' target='_blank' href={authUrl}>this</a> link."
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
 			/>
 			<Accordion
 				Title="Who is Eligible?"
-				Content="Anyone between the ages of 13 and 18 and Hackclub Verified"
+				Content="Anyone ages 13-18 who isn't banned from Hack Club can participate."
+				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
+			/>
+			<Accordion
+				Title="How is time tracked?"
+				Content="Software development time is tracked using <a class='text-chart-5 p-1 hover:bg-primary/80 transition rounded hover:text-white' target='_blank' href='hackatime.hackclub.com'>Hackatime</a>"
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
 			/>
 			<Accordion
 				Title="What is Hackclub?"
-				Content="Hackclub is a community of creative coders who love to build and share their projects."
+				Content="Hackclub is a community of creative coders who love to build and share their projects. It is also the world’s largest nonprofit movement of teenagers making cool projects."
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
 			/>
 			<Accordion
 				Title="Where can I find more information?"
-				Content="Checkout our Slack Channel <a class='text-red-200 hover:underline' target='_blank' href='https://hackclub.enterprise.slack.com/archives/C0ASY6R552R'>Here</a>"
+				Content="If you have any questions or need help with anything, just join the <a class='text-chart-5 p-1 hover:bg-primary/80 transition rounded hover:text-white' target='_blank' href='https://hackclub.enterprise.slack.com/archives/C0ASY6R552R'>#alchemize-help</a> channel in the Hack Club Slack! You can ask for help there, and the community will be happy to assist you. "
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
 			/>
 		</section>
