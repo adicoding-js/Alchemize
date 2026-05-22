@@ -31,6 +31,11 @@
 			? `./dashboard`
 			: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email+name+verification_status+slack_id&redirect_uri=${uri}`
 	)
+	let referUrl = $derived(
+		hasaccessToken
+			? `./refer`
+			: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email+name+verification_status+slack_id&redirect_uri=${uri}`
+	)
 	onMount(() => {
 		hasaccessToken =
 			document.cookie.split("; ").find(row => row.startsWith("slack_id=")) !==
@@ -124,7 +129,7 @@
 				</a>
 				<!-- MAKE THIS DIV BELoW APPEAR ONLy FOR LOGGED IN USERS VERY IMP. -->
 				<div class="group flex h-full items-center gap-x-3">
-					<a href="/refer" class="refer-btn">
+					<a href={referUrl} class="refer-btn">
 						<Users class="h-7 w-7" />
 						<p>Refer!</p>
 					</a>

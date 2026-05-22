@@ -89,6 +89,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     return {
         url: `${BASE_URL}/?refer=${id}`,
         myReferals,
-        counts: referedCountsByReferer
+        counts: referedCountsByReferer,
+        
     }
 }
