@@ -87,7 +87,7 @@
 			</Dialog.Close>
 
 			<Dialog.Close>
-				<a href={"/dashboard/refer"} class="group">
+				<a href={"/refer"} class="group">
 					<div
 						class="flex gap-1 hover:bg-red-950/20 p-4 border border-red-500/20 hover:border-red-500/60 rounded-lg transition-all"
 					>
