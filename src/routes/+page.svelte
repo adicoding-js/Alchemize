@@ -123,17 +123,19 @@
 					{/if}
 				</a>
 				<!-- MAKE THIS DIV BELoW APPEAR ONLy FOR LOGGED IN USERS VERY IMP. -->
-				<div class="group flex h-full items-center gap-x-3">
-					<a href="/refer" class="refer-btn">
-						<Users class="h-7 w-7" />
-						<p>Refer!</p>
-					</a>
-					<p
-						class="group-hover:opacity-100 opacity-0 transition animate-out text-sm bg-background/60 p-3 rounded-2xl"
-					>
-						Refer more people for cool rewards!
-					</p>
-				</div>
+				{#if authUrl === "./dashboard"}
+					<div class="group flex h-full items-center gap-x-3">
+						<a href="/refer" class="refer-btn">
+							<Users class="h-7 w-7" />
+							<p>Refer!</p>
+						</a>
+						<p
+							class="group-hover:opacity-100 opacity-0 transition animate-out text-sm bg-background/60 p-3 rounded-2xl"
+						>
+							Refer more people for cool rewards!
+						</p>
+					</div>
+				{/if}
 			</div>
 
 			<div class="flex flex-col gap-2 w-[clamp(120px,50vw,384px)]">
@@ -461,7 +463,7 @@
 		flex-direction: column;
 		width: 7vw;
 		/* min-height: 11vh; */
-		padding:10px 0px;
+		padding: 10px 0px;
 
 		background: var(--color-primary);
 		border: 3px solid #7f1d1d;
