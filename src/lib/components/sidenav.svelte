@@ -9,14 +9,6 @@
 		ArrowLeftRight,
 		Users,
 	} from "lucide-svelte"
-
-	// {
-	// 		href: "/dashboard",
-	// 		label: "Home",
-	// 		icon: Home,
-	// 		description: "Your dashboard overview",
-	// 	},
-
 	const navItems = [
 		{
 			href: "/dashboard/projects",
