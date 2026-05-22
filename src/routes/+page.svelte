@@ -48,6 +48,13 @@
 			.then(res => res.json())
 			.then(data => (rsvpCount = data.count))
 
+		referUrl = hasaccessToken
+			? `./refer`
+			: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email+name+verification_status+slack_id&redirect_uri=${uri}`
+		fetch("/rsvp")
+			.then(res => res.json())
+			.then(data => (rsvpCount = data.count))
+
 		const blob = document.getElementById("blob")
 		const handleMouseMove = (event: MouseEvent) => {
 			blob?.animate(
@@ -466,7 +473,7 @@
 		flex-direction: column;
 		width: 7vw;
 		/* min-height: 11vh; */
-		padding:10px 0px;
+		padding: 10px 0px;
 
 		background: var(--color-primary);
 		border: 3px solid #7f1d1d;
