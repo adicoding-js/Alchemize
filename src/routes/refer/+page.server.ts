@@ -64,6 +64,14 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
             Authorization: `Bearer ${at}`,
         }
     })
+    if (!request.ok) {
+        console.warn("Failed to fetch user data:", request.statusText);
+        return {
+            url: null,
+            myReferals: [],
+            counts: {}
+        }
+    }
     const data = await request.json()
     const id = encodeURIComponent(XORencrypt(`${data.identity.id} ${data.identity.first_name}`));
     let referalsResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/refers`, {
@@ -72,6 +80,9 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
             "Content-Type": 'application/json'
         }
     });
+    if (!referalsResponse.ok) {
+        throw new Error(`Failed to fetch referals data: ${referalsResponse.statusText}`);
+    }
     let referalsData: { records: AirtableReferRecord[] } = await referalsResponse.json();
     let myReferals = getMyReferals(data.identity.id, referalsData.records);
     let referedCountsByReferer = getReferedCountsByReferer(referalsData.records);
