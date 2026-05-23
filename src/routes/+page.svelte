@@ -15,6 +15,7 @@
 		PUBLIC_HACKCLUB_REDIRECT,
 	} from "$env/static/public"
 	import Accordion from "$lib/components/accordion.svelte"
+	let { data } = $props()
 	let rsvpCount: number | "Fetching" = $state("Fetching")
 	let showRotator = $state(false)
 	const clientId = PUBLIC_HACKCLUB_AUTH
@@ -32,8 +33,11 @@
 			: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email+name+verification_status+slack_id&redirect_uri=${uri}`
 	)
 	let referUrl = $state(`./refer`)
-				
+
 	onMount(() => {
+			if(data.error){
+		alert(data.error)
+	}
 		hasaccessToken =
 			document.cookie.split("; ").find(row => row.startsWith("slack_id=")) !==
 			undefined
