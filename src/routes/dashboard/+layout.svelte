@@ -33,7 +33,7 @@
 
 {#if $navigating}
 	<div
-		class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 pointer-events-none"
+		class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 pointer-events-none"
 	>
 		<div class="flex flex-col items-center gap-4">
 			<div

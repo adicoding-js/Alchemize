@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { onMount } from "svelte"
+	import { navigating } from "$app/stores"
+
 	const { data } = $props()
 	let linkText = data.url
 	console.log("Loaded referral page with data:", data)
@@ -6,6 +9,7 @@
 		referer: string
 		referedName: string
 	}
+	let loading = $state(true)
 	let myReferals: Refers[] = data.myReferals
 	let counts: Record<string, number> = data.counts
 	//Sort counts by value in descending order
@@ -18,9 +22,16 @@
 			console.error("Copy failed:", err)
 		}
 	}
-	
+	onMount(() => {
+		loading = false
+	})
 </script>
-
+{#if loading || $navigating}
+<div class="loading-screen w-screen h-screen bg-black flex items-center justify-center absolute top-0 z-20 flex-col gap-4">
+	<div class="loader rounded-full size-26 border-2 border-t-red-600 animate-spin border-gray-700"></div>
+	<span class="text-white text-lg ml-4">Loading your referrals...</span>
+</div>
+{/if}
 <main
 	class="flex gap-6 bg-gradbg p-6 w-screen h-screen overflow-hidden text-foreground"
 >
