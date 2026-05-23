@@ -31,11 +31,8 @@
 			? `./dashboard`
 			: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email+name+verification_status+slack_id&redirect_uri=${uri}`
 	)
-	let referUrl = $derived(
-		hasaccessToken
-			? `./refer`
-			: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email+name+verification_status+slack_id&redirect_uri=${uri}`
-	)
+	let referUrl = $state(`./refer`)
+				
 	onMount(() => {
 		hasaccessToken =
 			document.cookie.split("; ").find(row => row.startsWith("slack_id=")) !==
