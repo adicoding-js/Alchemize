@@ -2,7 +2,7 @@ import { env } from '$env/dynamic/private';
 import { error, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { jwtDecode } from 'jwt-decode';
-import {getDataFromAccessToken} from '$lib/utils';
+import { getDataFromAccessToken } from '$lib/utils';
 
 type IdTokenClaims = {
 	email?: string;
@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 	const redirectUri = env.HACKATIME_REDIRECT ?? env.PUBLIC_HACKATIME_REDIRECT;
 	const airtableClient = env.AIRTABLE_CLIENT;
 	const airtableSecret = env.AIRTABLE;
-    // console.log(clientId, clientSecret, redirectUri, airtableClient, airtableSecret);
+	// console.log(clientId, clientSecret, redirectUri, airtableClient, airtableSecret);
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, 'Missing Hackatime OAuth environment variables');
 	}
@@ -41,7 +41,7 @@ export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 			grant_type: 'authorization_code'
 		})
 	});
-	
+
 	const tokenBody = await tokenResponse.json()
 	if (!tokenResponse.ok || !tokenBody?.access_token) {
 		console.error('Hackatime token exchange failed:', tokenBody);
