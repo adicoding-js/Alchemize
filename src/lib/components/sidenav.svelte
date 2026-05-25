@@ -23,8 +23,8 @@
 			description: "Browse the shop",
 		},
 		{
-			href: "/dashboard/exchange",
-			label: "Exchange",
+			href: "/dashboard/trade",
+			label: "Trade",
 			icon: ArrowLeftRight,
 			description: "Trade and exchange",
 		},
