@@ -90,7 +90,7 @@
 				<img src="/Alchemist.webp" alt="" class="w-10 h-10" />
 			</div>
 		</div>
-		<div class="flex items-start justify-start gap-x-4">
+		<div class="flex items-start justify-start gap-x-4 h-full">
 			<div
 				class="flex flex-col items-center justify-center gap-4 w-[50%] h-full"
 			>

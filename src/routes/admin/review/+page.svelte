@@ -3,7 +3,8 @@
 	import Input from "$lib/components/ui/input/input.svelte"
 	import Textarea from "$lib/components/ui/textarea/textarea.svelte"
 	import ProjectDetailsDialog from "$lib/components/projectdetails-dialog.svelte"
-
+	let { data } = $props()
+	console.log(data)
 	let detailsOpen = $state(false)
 
 	let project = {

@@ -12,19 +12,14 @@ export const load: PageServerLoad = async ({cookies}) => {
         throw redirect(303, "/admin/login")
     }
     
-    jwt.verify(adminJwt, ADMIN_JWT_SECRET, (err, decoded) => {
-        if (err) {
-            console.error("Invalid JWT:", err)
-            throw redirect(303, "/admin/login")
-        }
-        const token = decoded as TokenPayload;
-        return {
-            isAdmin: true,
-            name: token.name || null,
-        }
-    })
+    let decoded = jwt.verify(adminJwt, ADMIN_JWT_SECRET) as TokenPayload;
+    if (!decoded || !decoded.name) {
+        throw redirect(303, "/admin/login")
+    }
+
     return {
         isAdmin: true,
-        name: null,
+        name: decoded.name || null,
+
     }
 }
