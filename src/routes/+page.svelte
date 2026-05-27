@@ -35,9 +35,9 @@
 	let referUrl = $state(`./refer`)
 
 	onMount(() => {
-			if(data.error){
-		alert(data.error)
-	}
+		if (data.error) {
+			alert(data.error)
+		}
 		hasaccessToken =
 			document.cookie.split("; ").find(row => row.startsWith("slack_id=")) !==
 			undefined
@@ -57,15 +57,28 @@
 			.then(data => (rsvpCount = data.count))
 
 		const blob = document.getElementById("blob")
+		let mouseX = 0
+		let mouseY = 0
+		let currentX = 0
+		let currentY = 0
+
 		const handleMouseMove = (event: MouseEvent) => {
-			blob?.animate(
-				{
-					top: `${event.clientY - 128}px`,
-					left: `${event.clientX - 128}px`,
-				},
-				{ duration: 700, fill: "forwards" }
-			)
+			mouseX = event.clientX - 128
+			mouseY = event.clientY - 128
 		}
+
+		const animateBlob = () => {
+			currentX += (mouseX - currentX) * 0.08
+			currentY += (mouseY - currentY) * 0.08
+
+			if (blob instanceof HTMLElement) {
+				blob.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`
+			}
+
+			requestAnimationFrame(animateBlob)
+		}
+
+		requestAnimationFrame(animateBlob)
 
 		window.addEventListener("mousemove", handleMouseMove)
 		return () => window.removeEventListener("mousemove", handleMouseMove)
@@ -74,10 +87,10 @@
 
 <div
 	id="blob"
-	class="z-20 fixed opacity-50 blur-[180px] size-64 pointer-events-none background-gradient"
+	class="z-20 fixed opacity-50 blur-[80px] size-64 pointer-events-none background-gradient"
 ></div>
 <div class="relative bg-gradbg w-screen min-h-screen overflow-x-hidden">
-	<div class="top-0 left-0 -z-10 fixed bg-black/70 w-full h-full"></div>
+	<div class="absolute inset-0 -z-10 bg-black/70"></div>
 
 	<div class="streaks">
 		<div class="streak streak-1"></div>
@@ -170,7 +183,7 @@
 			</a>
 		</section>
 
-		<div class="w-full leading-none">
+		<div class="w-full leading-none relative z-0">
 			<svg
 				viewBox="0 0 1440 100"
 				preserveAspectRatio="none"
@@ -374,14 +387,20 @@
 <style>
 	@import url("https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 
+	main {
+		transform: translateZ(0);
+	}
+
+	section {
+		will-change: transform;
+	}
+
 	.background-gradient {
 		position: fixed;
 		background: linear-gradient(45deg, #7f1d1d, #dc2626);
 		filter: blur(150px);
 		border-radius: 50%;
-		transition:
-			top 0.7s ease,
-			left 0.7s ease;
+		will-change: transform;
 	}
 
 	.streaks {
@@ -465,6 +484,10 @@
 		transition:
 			transform 0.2s ease,
 			box-shadow 0.2s ease;
+	}
+
+	svg {
+		display: block;
 	}
 
 	.refer-btn {
