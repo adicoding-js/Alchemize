@@ -189,7 +189,7 @@
 							<span class="font-alchemize text-foreground text-sm">Shop</span>
 						</a>
 						<a
-							href="/dashboard/Trade"
+							href="/dashboard/trade"
 							class="flex flex-col justify-center items-center gap-2 bg-white/5 hover:bg-primary/20 p-4 border border-white/10 hover:border-primary/50 rounded-xl transition-all"
 						>
 							<ArrowRightLeft class="w-7 h-7 font-extralight" />
