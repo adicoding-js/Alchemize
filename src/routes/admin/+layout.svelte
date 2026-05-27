@@ -1,5 +1,9 @@
 <script>
+	import { page } from "$app/state"
+	import Adminnav from "$lib/components/adminnav.svelte"
+
 	let { children } = $props()
+	const excludedRoutes = ["/admin", "/admin/login"]
 </script>
 
 <div class="bg-gradbg fixed w-screen h-screen -z-10">
@@ -7,6 +11,9 @@
 	<div class="bg fixed w-screen h-screen -z-10"></div>
 </div>
 {@render children()}
+{#if !excludedRoutes.includes(page.url.pathname)}
+	<Adminnav />
+{/if}
 
 <style>
 	.bg {

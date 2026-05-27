@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from "$lib/components/ui/button/index.js"
 	import * as Dialog from "$lib/components/ui/dialog/index.js"
+	import { cn } from "$lib/lib/utils"
 	import {
 		CompassIcon,
 		Home,
@@ -8,6 +9,7 @@
 		ShoppingBag,
 		ArrowLeftRight,
 		Users,
+		ShieldUser,
 	} from "lucide-svelte"
 	const navItems = [
 		{
@@ -27,6 +29,26 @@
 			label: "Trade",
 			icon: ArrowLeftRight,
 			description: "Trade and exchange",
+		},
+	]
+	const topNavItems = [
+		{
+			href: "/dashboard/",
+			label: "Dashboard",
+			icon: Home,
+			description: "Your dashboard",
+		},
+		{
+			href: "/refer",
+			label: "Refer",
+			icon: Users,
+			description: "Refer people for rewards",
+		},
+		{
+			href: "/admin",
+			label: "Admin",
+			icon: ShieldUser,
+			description: "Admin backend dash...",
 		},
 	]
 </script>
@@ -59,42 +81,33 @@
 				</p>
 			</div>
 		</Dialog.Header>
-		<div class="gap-3 grid grid-cols-2 px-6">
-			<Dialog.Close>
-				<a href={"/dashboard"} class="group">
-					<div
-						class="flex gap-1 hover:bg-red-950/20 p-4 border border-red-500/20 hover:border-red-500/60 rounded-lg transition-all"
-					>
-						<div class="p-2">
-							<Home class="w-6 h-6 text-chart-5" />
+		<div class="gap-x-3 grid grid-cols-3 px-6">
+			{#each topNavItems as item}
+				<Dialog.Close>
+					<a href={item.href} class="group">
+						<div
+							class="flex gap-1 hover:bg-red-950/20 p-4 border border-red-500/20 hover:border-red-500/60 rounded-lg transition-all items-center w-full"
+						>
+							<div class="p-2">
+								<item.icon class="w-6 h-6 text-chart-5" />
+							</div>
+							<div class="flex flex-col items-start w-full">
+								<p class="font-semibold text-foreground text-lg">
+									{item.label}
+								</p>
+								<p
+									class={cn(
+										"text-muted-foreground text-xs text-left",
+										item.label === "Refer" && "text-[11px]"
+									)}
+								>
+									{item.description}
+								</p>
+							</div>
 						</div>
-						<div class="flex flex-col items-start">
-							<p class="font-semibold text-foreground text-lg">Home</p>
-							<p class="text-muted-foreground text-xs">
-								Your dashboard overview
-							</p>
-						</div>
-					</div>
-				</a>
-			</Dialog.Close>
-
-			<Dialog.Close>
-				<a href={"/refer"} class="group">
-					<div
-						class="flex gap-1 hover:bg-red-950/20 p-4 border border-red-500/20 hover:border-red-500/60 rounded-lg transition-all"
-					>
-						<div class="p-2">
-							<Users class="w-6 h-6 text-chart-5" />
-						</div>
-						<div class="flex flex-col items-start">
-							<p class="font-semibold text-foreground text-lg">Refer</p>
-							<p class="text-muted-foreground text-xs">
-								Refer people for cool rewards
-							</p>
-						</div>
-					</div>
-				</a>
-			</Dialog.Close>
+					</a>
+				</Dialog.Close>
+			{/each}
 		</div>
 		<div class="gap-3 grid grid-cols-3 px-6 pb-6">
 			{#each navItems as item}
@@ -110,7 +123,9 @@
 								<p class="font-semibold text-foreground text-lg">
 									{item.label}
 								</p>
-								<p class="text-muted-foreground text-xs">{item.description}</p>
+								<p class="text-muted-foreground text-xs">
+									{item.description}
+								</p>
 							</div>
 						</div>
 					</a>
