@@ -23,6 +23,7 @@ type message = {
 	timestamp: string,
 	reviewerName?: string
 }
+
 function parseLog(logJson: string): Log[] {
 	try {
 		return JSON.parse(logJson) as Log[]

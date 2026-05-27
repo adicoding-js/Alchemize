@@ -34,7 +34,6 @@
 	let projects: Project[] = $derived(data?.projects ?? [])
 
 	let hacks: HackatimeProject[] = $derived(getHackatimeProjects(data?.hacks))
-	console.log(data?.projects)
 	let usedHackatimes = $derived(
 		new Set(
 			projects

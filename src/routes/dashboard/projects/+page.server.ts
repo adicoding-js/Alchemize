@@ -6,11 +6,13 @@ import { getDataFromAccessToken } from '$lib/utils';
 export const actions = {
 	create: async (event) => {
 
-        const accessToken = event.cookies.get('access_token');
+        const accessToken = event.cookies.get('access_token_new');
         if (!accessToken) {
             return { error: 'No access token found' };
         }
-        const email = (await getDataFromAccessToken(accessToken)).email;
+        const data = await getDataFromAccessToken(accessToken)
+        const email = data.email;
+        const slackId = data.slack_id;
         const formData = await event.request.formData();
         const projectName = formData.get('name') as string;
         const projectDescription = formData.get('description') as string;
@@ -41,7 +43,9 @@ export const actions = {
                     journals:"",
                     owner: email,
                     Theme: theme,
-
+                    address:"",
+                    birthdate:"",
+                    slackId: slackId,
 				}
 			})
 		});
@@ -76,7 +80,7 @@ export const actions = {
 	},
     update: async (event) => {
         		
-   const accessToken = event.cookies.get('access_token');
+   const accessToken = event.cookies.get('access_token_new');
         if (!accessToken) {
             return { error: 'No access token found' };
         }
@@ -112,8 +116,7 @@ export const actions = {
                     journals: "",
                     owner: email,
                     Theme: theme,
-                    address:"",
-                    birthdate:"",
+
                 }
             })
         });
@@ -179,7 +182,7 @@ export const load:PageServerLoad = async ({cookies})=>{
         }
     });
     const projectsData = await projectsResponse.json();
-    console.log(hacks)
+  
     return {
         projects: projectsData.records,
         hacks: hacks

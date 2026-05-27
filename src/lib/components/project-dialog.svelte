@@ -111,20 +111,29 @@
 		</Dialog.Header>
 		{#if mode === "update"}
 			<div class="previousReviews w-1/2 px-4 gap-4 flex flex-col">
-			{#each log as entry}
-				{#each entry.message as msg, i}
-					{#if msg.reviewerName != ""}
-					
-						<div
-							class="reviewEntry border-gray-700 border w-full px-2 py-2 rounded-sm rounded-r-lg {i+1 === entry.message.length ? (entry.status === 1 ? "border-l-green-700" : "border-l-red-700") : "border-l-red-700"} border-l-5"
-						>
-							<p class=" pr-30 text-gray-300 text-lg">{msg.userExternal}</p>
-							<h1 class="text-xs text-gray-400">By {msg.reviewerName} at {new Date(msg.timestamp).toLocaleString()}</h1>
-						</div>
-					{/if}
+				{#each log as entry}
+					{#each entry.message as msg, i}
+						{#if msg.reviewerName != ""}
+							<div
+								class="reviewEntry border-gray-700 border w-full px-2 py-2 rounded-sm rounded-r-lg {i +
+									1 ===
+								entry.message.length
+									? entry.status === 1
+										? 'border-l-green-700'
+										: 'border-l-red-700'
+									: 'border-l-red-700'} border-l-5"
+							>
+								<p class=" pr-30 text-gray-300 text-lg">{msg.userExternal}</p>
+								<h1 class="text-xs text-gray-400">
+									By {msg.reviewerName} at {new Date(
+										msg.timestamp
+									).toLocaleString()}
+								</h1>
+							</div>
+						{/if}
+					{/each}
 				{/each}
-			{/each}
-		</div>
+			</div>
 		{/if}
 		<div class="overflow-y-auto flex-1 px-6 pb-6">
 			<form
