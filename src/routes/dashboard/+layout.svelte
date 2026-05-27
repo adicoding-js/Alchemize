@@ -73,8 +73,7 @@
 		</div>
 	{/if}
 	{#if isAllowed}
-			{@render children()}
-
+		{@render children()}
 	{/if}
 </div>
 <!-- <div class='bg bg-[url("/bg2.webp")] w-screen h-screen bg-cover absolute top-0 left-0 z-[-1]'></div> -->
