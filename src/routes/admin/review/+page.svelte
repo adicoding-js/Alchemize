@@ -110,7 +110,7 @@
 				</button>
 			</nav>
 			<div
-				class="w-full h-full bg-background border-2 rounded-2xl flex flex-col items-center justify-start gap-y-3 p-2"
+				class="w-full h-full bg-background/40 border-2 rounded-2xl flex flex-col items-center justify-start gap-y-3 p-2"
 			>
 				{#if !project.name}
 					<div
