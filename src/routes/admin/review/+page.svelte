@@ -4,7 +4,7 @@
 	import Textarea from "$lib/components/ui/textarea/textarea.svelte"
 	import ProjectDetailsDialog from "$lib/components/projectdetails-dialog.svelte"
 	import { invalidateAll } from "$app/navigation"
-	import type { Project, AirtableProject, Log } from '$lib/types'
+	import type { Project, AirtableProject, Log } from "$lib/types"
 	let { data } = $props()
 	console.log(data)
 	let detailsOpen = $state(false)
@@ -21,7 +21,9 @@
 	}
 	const openProject = (projectId: string) => {
 		invalidateAll()
-		const nextProject = projects.find((item: AirtableProject) => item.id === projectId)
+		const nextProject = projects.find(
+			(item: AirtableProject) => item.id === projectId
+		)
 		if (nextProject) {
 			project = {
 				name: nextProject.fields.Name,
@@ -79,28 +81,29 @@
 		</aside>
 		<div class="w-full h-full flex flex-col items-center justify-start gap-y-5">
 			<nav class="top-bar flex bg-transparent gap-16 text-white">
-				<button onclick={() => mode = 1}
+				<button
+					onclick={() => (mode = 1)}
 					class="button w-34 bg-yellow-900 flex items-center justify-center py-2 rounded-full"
 				>
 					Pending (20)
 				</button>
-				
-				<button onclick={() => mode = 2}
 
+				<button
+					onclick={() => (mode = 2)}
 					class="button w-34 bg-red-900 flex items-center justify-center py-2 rounded-full"
 				>
 					Rejected (5)
 				</button>
-				
-				<button onclick={() => mode = 2}
 
+				<button
+					onclick={() => (mode = 2)}
 					class="button w-34 bg-green-900 flex items-center justify-center py-2 rounded-full"
 				>
 					Approved (15)
 				</button>
-				
-				<button onclick={() => mode = 0}
 
+				<button
+					onclick={() => (mode = 0)}
 					class="button w-34 bg-blue-900 flex items-center justify-center py-2 rounded-full"
 				>
 					Total (40)
@@ -109,7 +112,13 @@
 			<div
 				class="w-full h-full bg-background border-2 rounded-2xl flex flex-col items-center justify-start gap-y-3 p-2"
 			>
-				Open a project to review it!
+				{#if !project.name}
+					<div
+						class="w-full h-full flex items-center justify-center text-primary font-bold font-alchemize text-4xl"
+					>
+						Open a project to review it!
+					</div>
+				{/if}
 				{#if project.name}
 					<div class="details w-full">
 						<div class="top-sect w-full p-1 flex items-center justify-between">

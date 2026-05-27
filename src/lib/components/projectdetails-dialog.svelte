@@ -29,7 +29,7 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="sm:max-w-[600px]">
+	<Dialog.Content class="sm:max-w-150">
 		<Dialog.Header>
 			<Dialog.Title>{project.name} ({project.hours}hrs)</Dialog.Title>
 
