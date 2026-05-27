@@ -51,7 +51,7 @@
 <Dialog.Root>
 	<Dialog.Trigger
 		type="button"
-		class="top-5 right-5 z-99999 fixed bg-indigo-800/20 hover:bg-indigo-800/40 p-2 border border-indigo-800/50 rounded-full transition-colors pointer-events-auto"
+		class="top-5 right-5 z-999 fixed bg-indigo-800/20 hover:bg-indigo-800/40 p-2 border border-indigo-800/50 rounded-full transition-colors pointer-events-auto"
 	>
 		<CompassIcon class="w-6 h-6 text-indigo-800" />
 	</Dialog.Trigger>
