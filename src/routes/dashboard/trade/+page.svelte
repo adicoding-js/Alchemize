@@ -1,22 +1,46 @@
-<main class="flex w-full h-screen justify-around">
-	<div class="currencies flex flex-col h-full justify-around">
-		<div class="redstone flex">
-			<input type="number" name="" id="" />
-			<img src="/redstone" alt="Redstone" class="redstone" />
+<script>
+	import Input from "$lib/components/ui/input/input.svelte"
+</script>
+
+<main class="w-full h-screen bg-gradbg">
+	<div class="fixed inset-0 bg-black/60 z-10"></div>
+	<div class="relative z-50 flex justify-around w-full h-full">
+		<div class="flex flex-col h-full justify-around">
+			<div class="flex flex-col items-center gap-y-3">
+				<img
+					src="/alch-redstone.png"
+					alt="Redstone"
+					class="pointer-events-none h-30 w-auto"
+				/>
+				<Input type="number" />
+			</div>
+			<div class="flex flex-col items-center gap-y-3">
+				<img
+					src="/alch-glowstone.png"
+					alt="Glowstone"
+					class="pointer-events-none h-30 w-auto"
+				/>
+				<Input type="number" />
+			</div>
+			<div class="flex flex-col items-center gap-y-3">
+				<img
+					src="/alch-aquaregia.png"
+					alt="Aqua Regia"
+					class="pointer-events-none h-30 w-auto"
+				/>
+				<Input type="number" />
+			</div>
 		</div>
-		<div class="glowstone flex">
-			<input type="number" name="" id="" />
-			<img src="/glowstone" alt="Glowstone" class="glowstone" />
-		</div>
-		<div class="aqua-regia flex">
-			<input type="number" name="" id="" />
-			<img src="/aqua-regia" alt="Aqua Regia" class="aqua-regia" />
-		</div>
-	</div>
-	<div class="currencies flex flex-col h-full justify-around">
-		<div class="redstone flex">
-			<input type="number" name="" id="" />
-			<img src="/redstone" alt="Potion Mix" class="redstone" />
+		<div class=" flex flex-col h-full justify-around">
+			<div class=" flex flex-col items-center gap-y-3">
+				<img
+					src="/Alchemize.png"
+					alt="Potion Mix"
+					class=" pointer-events-none h-40 w-auto"
+				/>
+				<!-- the input is disabled cuz its read only ofc -->
+				<Input type="number" disabled />
+			</div>
 		</div>
 	</div>
 </main>
