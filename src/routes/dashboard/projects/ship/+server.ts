@@ -58,7 +58,7 @@ async function getHackatimeProject(accessToken: string, hackatimeProjectName: st
 	}
 	return project
 }
-function updateLog(log: Log[], deltaTime: number): Log[] {
+function updateLog(log: Log[], deltaTime: number, changelog: string): Log[] {
 	//4 cases:
 	//1. If the log is empty, create a new log with status pending
 	//2. If the last log is approved, create a new log with status pending
@@ -69,7 +69,7 @@ function updateLog(log: Log[], deltaTime: number): Log[] {
 			status: 0,
 			timestamp: new Date().toISOString(),
 			deltaTime,
-			message: [{ userExternal: "", internalNote: "", justification: "", timestamp: new Date().toISOString(), reviewerName: "" }],
+			message: [{ userExternal: changelog, internalNote: "", justification: "", timestamp: new Date().toISOString(), reviewerName: "user" }],
 			submmitedToHQ: false
 		}]
 	}
@@ -79,7 +79,7 @@ function updateLog(log: Log[], deltaTime: number): Log[] {
 			status: 0,
 			timestamp: new Date().toISOString(),
 			deltaTime,
-			message: [{ userExternal: "", internalNote: "", justification: "", timestamp: new Date().toISOString(), reviewerName: "" }],
+			message: [{ userExternal: changelog, internalNote: "", justification: "", timestamp: new Date().toISOString(), reviewerName: "user" }],
 			submmitedToHQ: false
 		}]
 	}
@@ -90,7 +90,7 @@ function updateLog(log: Log[], deltaTime: number): Log[] {
 			status: 0,
 			timestamp: new Date().toISOString(),
 			deltaTime: newDeltaTime,
-			message: [...lastLog.message, { userExternal: "", internalNote: "", justification: "", timestamp: new Date().toISOString(), reviewerName: "" }],
+			message: [...lastLog.message, { userExternal: changelog, internalNote: "", justification: "", timestamp: new Date().toISOString(), reviewerName: "user" }],
 			submmitedToHQ: false
 		}]
 	}else{
@@ -106,7 +106,7 @@ function calculateRecordedTime(log: Log[]): number {
 	return totalTime
 }
 export const POST: RequestHandler = async ({ request,cookies }) => {
-	const { recordId } = await request.json()
+	const { recordId, changelog } = await request.json()
 	const accessToken = cookies.get('access_token_new')
 	const hackatimeToken = cookies.get('hackatime_token')
 	if (!hackatimeToken || !recordId || !accessToken) {
@@ -131,7 +131,7 @@ export const POST: RequestHandler = async ({ request,cookies }) => {
 		console.warn(`Missing/Malformed owner email for project ${recordId}. Proceeding without ownership verification.`)
 	}
 	const currentTime = Date.now()
-	const updatedLog = updateLog(previousLogs, deltaTime)
+	const updatedLog = updateLog(previousLogs, deltaTime, changelog)
 	const response = await fetch(
 		`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Projects/${encodeURIComponent(recordId)}`,
 		{
