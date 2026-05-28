@@ -2,6 +2,7 @@
 	import { TriangleAlert } from "lucide-svelte"
 	import ProjectDialog from "$lib/components/project-dialog.svelte"
 	import { formatHours, getHackatimeProjects } from "$lib/utils"
+	import {invalidate, invalidateAll} from "$app/navigation"
 	import type {AirtableProject} from "$lib/types"
 	let projectBeingUpdated: AirtableProject | null = $state(null)
 	let { data } = $props()
@@ -51,7 +52,11 @@
 
 	let showRotator = $state(false)
 
-	async function shipProject() {
+	async function shipProject(changelog: string) {
+		if (changelog.trim() === "") {
+			alert("Please provide a changelog before shipping.")
+			return
+		}
 		const project = projectBeingUpdated
 		showRotator = true
 		if (project == null) {
@@ -63,6 +68,7 @@
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				recordId: project.id,
+				changelog: changelog,
 			}),
 			credentials: "include",
 		})
@@ -72,7 +78,38 @@
 				: `Error shipping project. Code: ${response.status} — contact @TheUtkarsh8939 on Slack`
 		)
 		console.log("Ship response:", await response.text())
+		invalidateAll()
 		showRotator = false
+	}
+	function applyBadge(project: AirtableProject) {
+		if(project.fields.status.startsWith("pending")){
+			return {
+				class:"badge h-5 text-xs w-20 bg-amber-800 flex items-center justify-center rounded-full border-l border-l-amber-500",
+				title:"Pending"
+			}
+		}else if(project.fields.status.startsWith("rejected")){
+			return {
+				class:"badge h-5 text-xs w-30 bg-red-800 flex items-center justify-center rounded-full border-l border-l-red-500",
+				title:"Changes Needed"
+			}
+		}else if(project.fields.status.startsWith("approved")){
+			return {
+				class:"badge h-5 text-xs w-20 bg-green-800 flex items-center justify-center rounded-full border-l border-l-green-500",
+				title:"Approved"
+			}
+		}else if(project.fields.status.startsWith("unshipped")){
+			return {
+				class:"badge h-5 text-xs w-20 bg-blue-800 flex items-center justify-center rounded-full border-l border-l-blue-500",
+				title:"Unshipped"
+			}
+		}
+			return {
+				class:"badge h-5 text-xs w-20 bg-blue-800 flex items-center justify-center rounded-full border-l border-l-blue-500",
+				title:"Unshipped"
+			}
+	}
+	function invalidater(){
+		invalidate(".")
 	}
 </script>
 
@@ -125,6 +162,9 @@
 								)
 							)}
 						</span>
+						<div class={applyBadge(project).class} title={applyBadge(project).title}>
+							{applyBadge(project).title}
+						</div>
 					</div>
 				</button>
 			{/each}
@@ -132,7 +172,7 @@
 	</div>
 </main>
 
-<ProjectDialog bind:open={newProjWindowOpened} mode="create" {availableHacks} />
+<ProjectDialog bind:open={newProjWindowOpened} mode="create" {availableHacks} {invalidater} onship={() => {}} />
 
 <ProjectDialog
 	bind:open={updateProjWindowOpened}
@@ -141,4 +181,5 @@
 	{availableHacks}
 	onship={shipProject}
 	{showRotator}
+	{invalidater}
 />
