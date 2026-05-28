@@ -60,7 +60,7 @@
 		generateChangelog(project)
 		console.log(project)
 	}
-	let mode = $state(0) // 0 = all, 1 = pending, 2 = approved, 3 = rejected
+	let mode = $state(1) // 0 = all, 1 = pending, 2 = approved, 3 = rejected
 	let filterProjectByMode = (project: AirtableProject) => {
 		if (project.fields.status.startsWith("pending") && mode === 1) return true
 		if (project.fields.status.startsWith("approved") && mode === 2) return true
