@@ -44,6 +44,7 @@
 		name?: string
 		total_seconds?: number
 	}
+	let changelog = $state("")
 	let showSecondRotator = $state(false)
 	let {
 		open = $bindable(),
@@ -52,13 +53,15 @@
 		availableHacks,
 		onship,
 		showRotator = false,
+		invalidater,
 	}: {
 		open: boolean
 		mode: "create" | "update"
 		project?: Project | null
 		availableHacks: HackatimeProject[]
-		onship?: () => void
+		onship: (agr0: string) => void
 		showRotator?: boolean
+		invalidater?: () => void
 	} = $props()
 	// console.log("log1", project)
 	const log = $derived.by(() => {
@@ -95,7 +98,7 @@
 						<Button
 							variant="outline"
 							class="border-orange-700 border-dashed gap-3"
-							onclick={onship}
+							onclick={() => onship(changelog)}
 						>
 							<i class="fa-solid fa-ship"></i>
 							{#if showRotator}
@@ -111,26 +114,37 @@
 		</Dialog.Header>
 		{#if mode === "update"}
 			<div class="previousReviews w-1/2 px-4 gap-4 flex flex-col">
-				{#each log as entry}
-					{#each entry.message as msg, i}
-						{#if msg.reviewerName != ""}
+				{#each [...log].reverse() as entry}
+					{#each [...entry.message].reverse() as msg, i}
+						{#if msg.reviewerName != "user"}
 							<div
-								class="reviewEntry border-gray-700 border w-full px-2 py-2 rounded-sm rounded-r-lg {i +
-									1 ===
-								entry.message.length
+								class="reviewEntry border-gray-700 border w-full px-2 py-2 rounded-sm rounded-r-lg {i ===
+								0
 									? entry.status === 1
 										? 'border-l-green-700'
 										: 'border-l-red-700'
 									: 'border-l-red-700'} border-l-5"
 							>
-								<p class=" pr-30 text-gray-300 text-lg">{msg.userExternal}</p>
+								<p class=" pr-30 text-gray-300">{msg.userExternal}</p>
 								<h1 class="text-xs text-gray-400">
 									By {msg.reviewerName} at {new Date(
 										msg.timestamp
 									).toLocaleString()}
 								</h1>
 							</div>
+						{:else}
+						<div
+							class="reviewEntry border-gray-700 border w-full px-2 py-2 rounded-sm rounded-r-lg border-l-amber-700 border-l-5"
+						>
+							<p class=" pr-30 text-gray-300 ">{msg.userExternal}</p>
+							<h1 class="text-xs text-gray-400">
+								New Ship at {new Date(
+									msg.timestamp
+								).toLocaleString()}
+							</h1>
+						</div>
 						{/if}
+						
 					{/each}
 				{/each}
 			</div>
@@ -277,6 +291,19 @@
 					{/if}
 					{mode === "create" ? "Create Project" : "Update Project"}
 				</Button>
+				{#if mode === "update"}
+					<div class="flex flex-col gap-2 mt-10">
+						<Label for="description">Changelog (Required for shipping)</Label>
+						<Textarea
+							id="description"
+							name="description"
+							required
+							placeholder="What did you add/modify? (Markdown Allowed)"
+							class="h-32"
+							bind:value={changelog}
+						/>
+					</div>
+				{/if}
 			</form>
 		</div>
 	</Dialog.Content>
