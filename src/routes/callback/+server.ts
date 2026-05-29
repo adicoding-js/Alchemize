@@ -26,7 +26,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const clientId = env.HACKCLUB_AUTH
 	const clientSecret = env.HACKCLUB_SECRET
 	const redirectUri = env.HACKCLUB_REDIRECT
-
+	let newUser = true
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, "Missing OAuth environment variables")
 	}
@@ -164,6 +164,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			if (!userHackatime) {
 				userHackatime = ""
 			}
+			newUser = false
 		}
 		cookies.set("airtable_user_record_id", userRecordId, {
 			httpOnly: true,
@@ -217,5 +218,10 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		path: "/",
 		maxAge: 60 * 60 * 24 * 30 * 12,
 	})
+	if (newUser) {
 	throw redirect(303, "https://rsvp.hackclub.community/alchemize-ysws")
+
+	}else{
+	throw redirect(303, "/dashboard")
+	}
 }
