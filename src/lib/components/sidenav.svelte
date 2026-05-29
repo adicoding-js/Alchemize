@@ -44,12 +44,12 @@
 			icon: Users,
 			description: "Refer people for rewards",
 		},
-		{
-			href: "/admin",
-			label: "Admin",
-			icon: ShieldUser,
-			description: "Admin backend dash...",
-		},
+		// {
+		// 	href: "/admin",
+		// 	label: "Admin",
+		// 	icon: ShieldUser,
+		// 	description: "Admin backend dash...",
+		// },
 	]
 </script>
 
@@ -81,7 +81,7 @@
 				</p>
 			</div>
 		</Dialog.Header>
-		<div class="gap-x-3 grid grid-cols-3 px-6">
+		<div class="gap-x-3 grid grid-cols-2 px-6">
 			{#each topNavItems as item}
 				<Dialog.Close>
 					<a href={item.href} class="group">

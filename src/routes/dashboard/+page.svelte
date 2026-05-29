@@ -206,6 +206,7 @@
 								Refer!
 							</span>
 						</a>
+						{#if data.admin}
 						<a
 							href="/admin"
 							class="flex flex-col justify-center items-center gap-2 bg-white/5 hover:bg-primary/20 p-4 border border-white/10 hover:border-primary/50 rounded-xl transition-all"
@@ -215,6 +216,7 @@
 								Admin
 							</span>
 						</a>
+						{/if}
 					</div>
 				</div>
 

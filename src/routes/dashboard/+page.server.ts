@@ -51,6 +51,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
     });
     const projectsData = await projectsResponse.json();
     const userData = await userResponse.json();
+    let admin = false
+    if(cookies.get("admin_access_token")){
+        admin = true
+    }
     return {
         projects: projectsData.records,
         hacks: hacks,
@@ -58,6 +62,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
         eligiblity: data.identity.ysws_eligible,
         name: data.identity.first_name,
         hackatimeVerified: hackatimeVerified === "true",
-        user: userData.records?.[0]?.fields ?? {}
+        user: userData.records?.[0]?.fields ?? {},
+        admin: admin
     }
 };
