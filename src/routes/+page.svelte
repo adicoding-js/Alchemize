@@ -319,8 +319,8 @@
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
 			/>
 			<Accordion
-				Title="What is Hackclub?"
-				Content="Hackclub is a community of creative coders who love to build and share their projects. It is also the world’s largest nonprofit movement of teenagers making cool projects."
+				Title="What is Hack Club?"
+				Content="Hack Club is a community of creative coders who love to build and share their projects. It is also the world’s largest nonprofit movement of teenagers making cool projects."
 				addClass="faq-item h-20 w-[clamp(120px,90vw,1084px)] font-sans relative z-10"
 			/>
 			<Accordion
