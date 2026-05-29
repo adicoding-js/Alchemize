@@ -14,7 +14,7 @@
 	class="admin-cont flex h-screen w-screen items-center justify-center flex-col gap-y-2"
 >
 	<img src="/Alchemize-Admin.png" alt="alchemize" class="h-35" />
-	<h1 class="text-5xl text-admin-text font-alchemize font-bold">
+	<h1 class="text-5xl text-admin-primary font-alchemize font-bold">
 		Alchemize Admin
 	</h1>
 	<h1 class="text-xl text-white font-alchemize font-medium">
@@ -25,7 +25,7 @@
 			onclick={() => {
 				window.location.href = "/admin/review"
 			}}
-			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-text flex items-center just-center gap-y-2 flex-col rounded-xl transition"
+			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-primary flex items-center just-center gap-y-2 flex-col rounded-xl transition"
 		>
 			<UserStar class="h-10 w-10" />
 			Review dash
@@ -34,7 +34,7 @@
 			onclick={() => {
 				window.location.href = "/admin/fulfillement"
 			}}
-			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-text flex items-center just-center gap-y-2 flex-col rounded-xl transition"
+			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-primary flex items-center just-center gap-y-2 flex-col rounded-xl transition"
 		>
 			<Package class="h-10 w-10" />
 			Fulfillement
@@ -43,7 +43,7 @@
 			onclick={() => {
 				window.location.href = "/admin/super-admin"
 			}}
-			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-text flex items-center just-center gap-y-2 flex-col rounded-xl transition"
+			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-primary flex items-center just-center gap-y-2 flex-col rounded-xl transition"
 		>
 			<LockKeyhole class="h-10 w-10" />
 			Supaadmin
@@ -52,7 +52,7 @@
 			onclick={() => {
 				window.location.href = "/dashboard"
 			}}
-			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-text flex items-center just-center gap-y-2 flex-col rounded-xl transition"
+			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-primary flex items-center just-center gap-y-2 flex-col rounded-xl transition"
 		>
 			<Home class="h-10 w-10" />
 			Home
