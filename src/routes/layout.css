@@ -132,8 +132,11 @@ body{
     --popover: oklch(0.218 0.008 223.9);
     --popover-foreground: oklch(0.987 0.002 197.1);
     --primary: oklch(0.455 0.188 13.697);
-    --admin-text: oklch(33.767% 0.2183 266.339);
-    --admin-primary: oklch(18.037% 0.09418 271.837);
+    --admin-primary: oklch(0.62 0.19 275);
+  --admin-primary-hover: oklch(0.68 0.18 275);
+
+  --admin-text: oklch(0.92 0.02 255);
+ 
     --primary-foreground: oklch(0.969 0.015 12.422);
     --secondary: oklch(0.274 0.006 286.033);
     --secondary-foreground: oklch(0.985 0 0);
