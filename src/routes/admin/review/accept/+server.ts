@@ -113,7 +113,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     }
     try {
         const currencyType = themeToKeys(theme)
-        await updateUserCurrency(newDeltaTime, userEmailId, currencyType)
+        await updateUserCurrency(Math.floor(newDeltaTime/60), userEmailId, currencyType)
     } catch (err) {
         console.error("Failed to update user currency:", {
             error: err instanceof Error ? err

@@ -114,7 +114,7 @@
 					"badge h-5 text-xs w-30 bg-red-800 flex items-center justify-center rounded-full border-l border-l-red-500",
 				title: "Changes Needed",
 			}
-		} else if (project.fields.status.startsWith("approved")) {
+		} else if (project.fields.status.startsWith("accepted")) {
 			return {
 				class:
 					"badge h-5 text-xs w-20 bg-green-800 flex items-center justify-center rounded-full border-l border-l-green-500",
