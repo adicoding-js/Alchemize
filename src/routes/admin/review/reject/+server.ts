@@ -10,7 +10,7 @@ function updateLog(log: Log[], deltaTime: number, userExternal: string, name: st
     }
     const lastLog = log[log.length - 1]
 
-        const newDeltaTime = lastLog.deltaTime + deltaTime
+        const newDeltaTime = lastLog.deltaTime - deltaTime
         return [...log.slice(0, -1), {
             ...lastLog,
             status: 2,

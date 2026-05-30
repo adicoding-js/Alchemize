@@ -28,7 +28,7 @@
 		const hackatimeLine = `User tracked ${project.hours} hours on Hackatime project: ${project.hackatime}.\n`
 		const isUpdateLine = project.update ? "This submission is an update to a previous one.\n" : "This is the user's first submission for this project.\n"
 		const time = (project.log.length > 1 ? project.log[project.log.length - 1].deltaTime : project.hours)
-		const delta ="Delta is: "+  time + " hours \t Adjustment: Subtracted " + (-overrideHours) + " hours from delta(New hours: " + (time + overrideHours) + ").\n"
+		const delta ="Delta is: "+  time + " hours \t Adjustment: Subtracted " + (overrideHours) + " hours from delta(New hours: " + (time - overrideHours) + ").\n"
 
 		let changes = ""
 		
@@ -67,7 +67,8 @@
 				code: nextProject.fields.code,
 				readme: nextProject.fields.code,
 				update: nextProject.fields.update,
-				hackatime: nextProject.fields.hackatime
+				hackatime: nextProject.fields.hackatime,
+				owner: nextProject.fields.owner,
 			} as Project
 			autogenChangelog = generateChangelog(project)
 		}
@@ -93,13 +94,49 @@
 				internalNote,
 				userExternal: feedback,
 				justification: autogenChangelog,
-				decreaseTime: -overrideHours,
+				decreaseTime: overrideHours,
 			}),
 		})
 		if (!response.ok) {
 			alert("Failed to reject project. Please referesh")
 			console.error("Failed to reject project", await response.text())
 			return new Response("Failed to reject project", { status: 500 })
+		}
+		const { newLog } = await response.json()
+		project.log = newLog
+	}
+	const acceptProject = async (project: Project, feedback: string, internalNote: string, overrideHours: number, justification: string) => {
+					console.log({
+				recordId: project.id,
+				log: JSON.stringify(project.log),
+				internalNote,
+				userExternal: feedback,
+				justification: autogenChangelog,
+				decreaseTime: overrideHours,
+				theme: project.category,
+				userEmailId: project.owner,
+			})
+		const response = await fetch("/admin/review/accept", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+
+			body: JSON.stringify({
+				recordId: project.id,
+				log: JSON.stringify(project.log),
+				internalNote,
+				userExternal: feedback,
+				justification: autogenChangelog,
+				decreaseTime: overrideHours,
+				theme: project.category,
+				userEmailId: project.owner,
+			}),
+		})
+		if (!response.ok) {
+			alert("Failed to accept project. Please referesh")
+			console.error("Failed to accept project", await response.text())
+			return new Response("Failed to accept project", { status: 500 })
 		}
 		const { newLog } = await response.json()
 		project.log = newLog
@@ -248,7 +285,7 @@
 										<h2 class="text-muted-foreground text-lg">
 											Override hours (optional)
 										</h2>
-										<Input class="w-[20%]" type="number" bind:value={overrideHours} max="0" />
+										<Input class="w-[20%]" type="number" bind:value={overrideHours} min="0" />
 									</div>
 									<Textarea
 										class=" h-36"
@@ -259,6 +296,7 @@
 								<div class="buttons grid grid-cols-2 gap-x-3 w-full mt-3">
 									<button
 										class="py-1 px-2 text-lg hover:scale-102 rounded-md bg-green-800"
+										onclick={() => acceptProject(project, userExternal, internalNote, overrideHours, autogenChangelog)}
 									>
 										Approve
 									</button>

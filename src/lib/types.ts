@@ -14,6 +14,7 @@
 		reviewerName?: string
 	}
 	export interface Project {
+		owner?: string
 		id: string
 		name: string
 		hours: number
