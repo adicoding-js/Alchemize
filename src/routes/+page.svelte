@@ -549,8 +549,9 @@
 		line-height: 1;
 		pointer-events: none;
 		user-select: none;
-		color: transparent;
-		-webkit-text-stroke: 3px var(--color-primary);
+		color: var(--color-primary);
+		-webkit-text-stroke: 4px var(--color-primary);
+		text-shadow: 3px 3px 4px rgb(255, 186, 206);
 	}
 
 	.cta-btn {
