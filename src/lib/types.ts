@@ -54,7 +54,7 @@
         name: string;
         description: string;
         cdnImage: string;
-        itemPrice: number;
+        itemPrice: UserCurrency;
     }
     export interface UserCurrency {
         redstone: number

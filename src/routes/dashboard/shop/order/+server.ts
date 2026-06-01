@@ -7,9 +7,27 @@ interface RequestBody {
     itemId: string;
     quantity: number;
 }
-
+const getCurrency = (itemPrice: UserCurrency): keyof UserCurrency => {
+    if(itemPrice.redstone>0){
+        return "redstone"
+    }else if(itemPrice.glowstone>0){
+        return "glowstone"
+    }else if(itemPrice.aqua_regia>0){
+        return "aqua_regia"
+    }else{
+        return "potion_mix"
+    }
+}
+const purchaseItem = (item: Item, quantity: number, userCurrency: UserCurrency): UserCurrency => {
+    const currencyType = getCurrency(item.itemPrice);
+    const totalCost = item.itemPrice[currencyType] * quantity;
+    return { ...userCurrency, [currencyType]: userCurrency[currencyType] - totalCost };
+}
 export const POST: RequestHandler = async ({ request, cookies }) => {
     const body: RequestBody = await request.json();
+    if(body.quantity <= 0){
+        return new Response("Quantity must be greater than 0", { status: 400 })
+    }
     const items: Item[] = itemsJson as Item[];
     const item = items.find(i => i.itemID === body.itemId);
     if (!item) {
@@ -49,14 +67,14 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         return new Response("User not found", { status: 404 })
     }
     const currentCurrency = looseJson(userRecord.fields.currency) as UserCurrency;
-    const potionMix = currentCurrency.potion_mix || 0;
-    console.log("Potion mix:", currentCurrency.potion_mix);
-    const totalPrice = item.itemPrice * body.quantity;
-    if (potionMix < totalPrice) {
-        console.log(potionMix, totalPrice);
-        return new Response("Insufficient currency: " + potionMix + " < " + totalPrice, { status: 400 })
+    const currencyUsed = getCurrency(item.itemPrice);
+    const totalPrice = item.itemPrice[currencyUsed] * body.quantity;
+    const hasThatCurrency = currentCurrency[currencyUsed];
+    if (hasThatCurrency < totalPrice) {
+        console.log(hasThatCurrency, totalPrice);
+        return new Response("Insufficient currency: " + hasThatCurrency + " < " + totalPrice, { status: 400 })
     }
-    const updatedCurrency = potionMix - totalPrice;
+    const updatedCurrency = purchaseItem(item, body.quantity, currentCurrency);
     const updatedUserResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Users/${userRecord.id}`, {
         method: "PATCH",
         headers: {
@@ -65,7 +83,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         },
         body: JSON.stringify({
             fields: {
-                "currency": JSON.stringify({ ...currentCurrency, potion_mix: updatedCurrency })
+                "currency": JSON.stringify(updatedCurrency)
             }
         })
     });
@@ -103,7 +121,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             "Authorization": `Bearer ${BOT_AUTH}`
         },
         body: JSON.stringify(
-            { "user_id": data.identity?.slack_id, "order_id": "< _Some random ID_ >", "item_name": item.name, "qty": `${body.quantity}`, "cost": `${totalPrice} Potion Mix` }
+            { "user_id": data.identity?.slack_id, "order_id": "< _Some random ID_ >", "item_name": item.name, "qty": `${body.quantity}`, "cost": `${totalPrice} ${currencyUsed.charAt(0).toUpperCase() + currencyUsed.slice(1)}` }
         )
     })
     if (!botResponse.ok) {

@@ -1,32 +1,60 @@
 <script lang="ts">
 	import Button from "$lib/components/ui/button/button.svelte"
 	import * as Dialog from "$lib/components/ui/dialog"
+	import type {UserCurrency} from "$lib/types"
 	let qty = $state(1)
 	
 	type ShopItem = {
 		name: string
 		description: string
-		price: number
+		price: UserCurrency
 		image: string
 	}
 
 	let {
 		open = $bindable(false),
+		allItems = [] as ShopItem[],
 		item = {
 			name: "",
 			description: "",
-			price: 0,
+			price: { redstone: 0, glowstone: 0, aqua_regia: 0, potion_mix: 0 },
 			image: "",
 		},
 		currency,
 		onConfirm = (qty: number) => {},
 	}: {
-		open: boolean
+		open: boolean,
+		allItems: ShopItem[],
 		item: ShopItem,
-		currency: number,
+		currency: UserCurrency,
 		onConfirm: (qty: number) => void
 	} = $props()
-	let disabled = $derived(currency < qty*item.price)
+	// let disabled = $derived(currency < qty*item.price.potion_mix)
+	
+	const renderCurrency = (currency: UserCurrency): [string, keyof UserCurrency] => {
+		if(currency.redstone>0){
+			return [`${currency.redstone} Redstone`, "redstone"]
+		}else if(currency.glowstone>0){
+			return [`${currency.glowstone} Glowstone`, "glowstone"]
+		}else if(currency.aqua_regia>0){
+			return [`${currency.aqua_regia} Aqua Regia`, "aqua_regia"]
+		}else if(currency.potion_mix>0){
+			return [`${currency.potion_mix} Potion Mix`, "potion_mix"]
+		}else{
+			return ["0 Currency", "potion_mix"]
+		}
+	}
+	let currencyToShow = $derived(renderCurrency(item.price))
+	const isDisabled = (userHas: UserCurrency, itemPrice: UserCurrency, qty: number) => {
+		return (
+			userHas.redstone < qty * itemPrice.redstone ||
+			userHas.glowstone < qty * itemPrice.glowstone ||
+			userHas.aqua_regia < qty * itemPrice.aqua_regia ||
+			userHas.potion_mix < qty * itemPrice.potion_mix
+		)
+	}
+	let disabled = $derived(isDisabled(currency, item.price, qty))
+
 </script>
 
 <Dialog.Root bind:open>
@@ -60,14 +88,10 @@
 				>
 					<div class="space-y-1 text-right">
 						<p class="text-xl">
-							Item price: <span class="text-primary font-bold">
-								{qty*item.price}</span
-							>
-							Potion Mixes
+							Item price: {currencyToShow[0]}
 						</p>
 						<p class="text-xl">
-							Current balance: <span class="text-primary font-bold"> {currency}</span>
-							Potion Mixes
+							Current balance: {currency[currencyToShow[1]]} {currencyToShow[1]}
 						</p>
 						<div class="flex mt-4 items-center justify-center h-10 gap-5 text-white text-xl"><span>Quantity:</span> <input type="number" name="" id="" bind:value={qty} class="border-red-800 text-white w-20 p-2 border outline-none rounded-lg" on:input={(e) => (qty = parseInt((e.target as HTMLInputElement).value) || 1)}></div>
 					</div>
