@@ -18,7 +18,7 @@
 		itemID: string
 		name: string
 		description: string
-		price: number
+		price: UserCurrency
 		image: string
 		grayedOut?: boolean
 	}
@@ -27,7 +27,7 @@
 	let selectedItem = $state<ShopItem>({
 		name: "",
 		description: "",
-		price: 0,
+		price: { redstone: 0, glowstone: 0, aqua_regia: 0, potion_mix: 0 },
 		image: "",
 		itemID: "",
 	})
@@ -39,10 +39,17 @@
 			description: item.description,
 			price: item.itemPrice,
 			image: item.cdnImage,
-			grayedOut: currencies.potion_mix < item.itemPrice,
+			grayedOut: isGrayedOut(currencies, item.itemPrice),
 		})),
 	]
-
+	function isGrayedOut(userHas: UserCurrency, itemPrice: UserCurrency) {
+		return (
+			userHas.redstone < itemPrice.redstone ||
+			userHas.glowstone < itemPrice.glowstone ||
+			userHas.aqua_regia < itemPrice.aqua_regia ||
+			userHas.potion_mix < itemPrice.potion_mix
+		)
+	}
 	function handleBuyClick(item: ShopItem) {
 		selectedItem = item
 		isDialogOpen = true
@@ -50,9 +57,13 @@
 
 	function handleConfirmPurchase(qty: number) {
 		console.log(
-			`Purchased ${selectedItem.name} for ${qty * selectedItem.price} potion mixes!`
+			`Purchased ${selectedItem.name} for ${qty * selectedItem.price.potion_mix} potion mixes!`
 		)
-				currencies.potion_mix -= qty * selectedItem.price
+				currencies.potion_mix -= qty * selectedItem.price.potion_mix
+				currencies.redstone -= qty * selectedItem.price.redstone
+				currencies.glowstone -= qty * selectedItem.price.glowstone
+				currencies.aqua_regia -= qty * selectedItem.price.aqua_regia
+				currencies = currencies // trigger reactivity
 
 		const buyApi = fetch("/dashboard/shop/order", {
 			method: "POST",
@@ -65,7 +76,7 @@
 			}),
 		}).then(res => {
 			if (res.ok) {
-				// Update the local currency amount after purchase
+				alert("Purchase successful!")
 			} else {
 				alert("Purchase failed")
 				console.error("Purchase failed", res)
@@ -75,8 +86,20 @@
 			}
 		})
 	}
+	const renderCurrency = (currency: UserCurrency) => {
+		if(currency.redstone>0){
+			return `${currency.redstone} Redstone`
+		}else if(currency.glowstone>0){
+			return `${currency.glowstone} Glowstone`
+		}else if(currency.aqua_regia>0){
+			return `${currency.aqua_regia} Aqua Regia`
+		}else if(currency.potion_mix>0){
+			return `${currency.potion_mix} Potion Mix`
+		}else{
+			return "0 Currency"
+		}
+	}
 </script>
-
 <div class="w-full h-screen bg-gradbg overflow-hidden">
 	<div class="fixed inset-0 bg-black/60 z-10"></div>
 
@@ -109,7 +132,7 @@
 							disabled={item.grayedOut}
 							onclick={() => handleBuyClick(item)}
 						>
-							Buy • {item.price}
+							Buy • {renderCurrency(item.price)}
 						</Button>
 					</div>
 				{/each}
@@ -122,6 +145,6 @@
 	allItems={shopItems}
 	bind:open={isDialogOpen}
 	item={selectedItem}
-	currency={currencies.potion_mix}
+	currency={currencies}
 	onConfirm={handleConfirmPurchase}
 />

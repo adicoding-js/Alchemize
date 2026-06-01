@@ -225,8 +225,8 @@
 				>
 					<h2 class="font-alchemize text-primary text-lg">Currency</h2>
 					<div class="gap-2 flex justify-around">
-						<div class="flex grids grid-cols-3">
-							<span class="text-lg">🔴</span>
+						<div class="flex items-center gap-2">
+							<span class="text-lg"><img src="/alch-redstone.png" alt="Redstone" class="w-5 h-5" /></span>
 							<div>
 								<p class="text-muted-foreground text-xs">Redstone</p>
 								<p class="font-alchemize text-foreground">
@@ -235,7 +235,7 @@
 							</div>
 						</div>
 						<div class="flex items-center gap-2">
-							<span class="text-lg">🟡</span>
+							<span class="text-lg"><img src="/alch-glowstone.png" alt="Glowstone" class="w-5 h-5" /></span>
 							<div>
 								<p class="text-muted-foreground text-xs">Glowstone</p>
 								<p class="font-alchemize text-foreground">
@@ -244,11 +244,20 @@
 							</div>
 						</div>
 						<div class="flex items-center gap-2">
-							<span class="text-lg">🟢</span>
+							<span class="text-lg"><img src="/alch-aquaregia.png" alt="Aqua Regia" class="w-5 h-5" /></span>
 							<div>
 								<p class="text-muted-foreground text-xs">Aqua Regia</p>
 								<p class="font-alchemize text-foreground">
 									{userCurrencies.aqua_regia}
+								</p>
+							</div>
+						</div>
+						<div class="flex items-center gap-2">
+							<span class="text-lg"><img src="/Alchemize.png" alt="Potion Mix" class="w-5 h-5" /></span>
+							<div>
+								<p class="text-muted-foreground text-xs">Potion Mix</p>
+								<p class="font-alchemize text-foreground">
+									{userCurrencies.potion_mix}
 								</p>
 							</div>
 						</div>

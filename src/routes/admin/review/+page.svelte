@@ -78,7 +78,7 @@
 	let mode = $state(1) // 0 = all, 1 = pending, 2 = approved, 3 = rejected
 	let filterProjectByMode = (project: AirtableProject) => {
 		if (project.fields.status.startsWith("pending") && mode === 1) return true
-		if (project.fields.status.startsWith("approved") && mode === 2) return true
+		if (project.fields.status.startsWith("accepted") && mode === 2) return true
 		if (project.fields.status.startsWith("rejected") && mode === 3) return true
 		if (mode === 0) return true
 	}
@@ -181,7 +181,7 @@
 				</button>
 
 				<button
-					onclick={() => (mode = 2)}
+					onclick={() => (mode = 3)}
 					class="button w-34 bg-red-900 flex items-center justify-center py-2 rounded-full"
 				>
 					Rejected (5)
