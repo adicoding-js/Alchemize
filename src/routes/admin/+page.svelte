@@ -1,6 +1,6 @@
 <script>
 	import Button from "$lib/components/ui/button/button.svelte"
-	import { Home, LockKeyhole, Package, UserStar } from "lucide-svelte"
+	import { Home, LockKeyhole, Package, Star, UserStar } from "lucide-svelte"
 	import { onMount } from "svelte"
 	const { data } = $props()
 	onMount(() => {
@@ -20,15 +20,24 @@
 	<h1 class="text-xl text-white font-alchemize font-medium">
 		Where would you like to go today, {data.name || "Admin"}?
 	</h1>
-	<nav class="grid grid-cols-4 grid-rows-2 gap-10 mt-5">
+	<nav class="grid grid-cols-3 grid-rows-2 gap-10 mt-5">
 		<button
 			onclick={() => {
 				window.location.href = "/admin/review"
 			}}
 			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-primary flex items-center just-center gap-y-2 flex-col rounded-xl transition"
 		>
+			<Star class="h-10 w-10" />
+			T1 Review
+		</button>
+		<button
+			onclick={() => {
+				window.location.href = "/admin/review2"
+			}}
+			class="bg-transparent px-15 py-5 text-lg hover:scale-105 border-4 hover:bg-transparent hover:text-admin-primary flex items-center just-center gap-y-2 flex-col rounded-xl transition"
+		>
 			<UserStar class="h-10 w-10" />
-			Review dash
+			T2 Review
 		</button>
 		<button
 			onclick={() => {
