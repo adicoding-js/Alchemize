@@ -2,43 +2,77 @@
 	import { page } from "$app/state"
 	import { onMount } from "svelte"
 	import Adminnav from "$lib/components/adminnav.svelte"
+	import AdminThemeEditor from "$lib/components/AdminThemeEditor.svelte"
+
+	import * as Dialog from "$lib/components/ui/dialog/index.js"
+	import { Button } from "$lib/components/ui/button/index.js"
+	import { Palette } from "lucide-svelte"
+	import Hint from "$lib/components/hint.svelte"
 
 	let { children } = $props()
 	const excludedRoutes = ["/admin", "/admin/login"]
+
 	let adminPrimary = $state("#6875f6")
 	let adminHover = $state("#7a8aff")
 	let adminText = $state("#dce6f2")
 	let adminBg = $state("#172554")
 	let admin2Bg = $state("#0C4A6E")
 
-	let themeEditorEl: HTMLDivElement | null = $state(null)
-	let editorX = $state(12)
-	let editorY = $state(12)
+	let triggerEl: HTMLButtonElement | null = $state(null)
+	let buttonX = $state(20)
+	let buttonY = $state(20)
 	let isDragging = false
+	let hasDragged = false
 	let dragOffsetX = 0
 	let dragOffsetY = 0
+
+	function captureElement(node: HTMLButtonElement) {
+		triggerEl = node
+	}
+
 	onMount(() => {
-		editorX = window.innerWidth - 200
-		editorY = window.innerHeight - 200
+		buttonX = window.innerWidth - 80
+		buttonY = window.innerHeight - 80
 	})
+
 	const onPointerDown = (event: PointerEvent) => {
-		if (!themeEditorEl) return
+		if (!triggerEl) return
 		isDragging = true
-		dragOffsetX = event.clientX - editorX
-		dragOffsetY = event.clientY - editorY
-		themeEditorEl.setPointerCapture(event.pointerId)
+		hasDragged = false
+		dragOffsetX = event.clientX - buttonX
+		dragOffsetY = event.clientY - buttonY
+		triggerEl.setPointerCapture(event.pointerId)
 	}
 
 	const onPointerMove = (event: PointerEvent) => {
 		if (!isDragging) return
-		editorX = Math.max(0, event.clientX - dragOffsetX)
-		editorY = Math.max(0, event.clientY - dragOffsetY)
+		if (
+			Math.abs(event.clientX - buttonX - dragOffsetX) > 2 ||
+			Math.abs(event.clientY - buttonY - dragOffsetY) > 2
+		) {
+			hasDragged = true
+		}
+		buttonX = Math.max(
+			10,
+			Math.min(window.innerWidth - 70, event.clientX - dragOffsetX)
+		)
+		buttonY = Math.max(
+			10,
+			Math.min(window.innerHeight - 70, event.clientY - dragOffsetY)
+		)
 	}
 
 	const onPointerUp = (event: PointerEvent) => {
 		if (!isDragging) return
 		isDragging = false
-		themeEditorEl?.releasePointerCapture(event.pointerId)
+		triggerEl?.releasePointerCapture(event.pointerId)
+	}
+
+	const handleTriggerClick = (event: MouseEvent) => {
+		if (hasDragged) {
+			event.preventDefault()
+			event.stopPropagation()
+		}
 	}
 
 	onMount(() => {
@@ -61,65 +95,52 @@
 	</div>
 	{@render children()}
 </div>
+
 {#if !excludedRoutes.includes(page.url.pathname)}
 	<Adminnav />
 {/if}
-<div
-	bind:this={themeEditorEl}
-	class="themeEditor absolute h-50 w-60 pt-3 pl-3 bg-[#000000b0] z-50 flex flex-col rounded-2xl"
-	style="left: {editorX}px; top: {editorY}px;"
->
-	<span
-		class="text-white text-sm cursor-move select-none"
-		ARIA-label="Drag to move"
-		on:pointerdown={onPointerDown}>Edit the Themes</span
+
+<Dialog.Root>
+	<div
+		class="fixed z-50 touch-none select-none"
+		style="left: {buttonX}px; top: {buttonY}px;"
 	>
-	<div class="flex text-xs items-center gap-3">
-		<label for="theme-select" class="w-24">Admin Primary</label>
-		<input
-			type="color"
-			name="themeColor"
-			id="themeColor"
-			bind:value={adminPrimary}
-		/>
+		<Dialog.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
+					bind:ref={triggerEl}
+					onpointerdown={onPointerDown}
+					onclickcapture={handleTriggerClick}
+					class="h-12 w-12 rounded-full shadow-2xl cursor-move bg-admin-primary text-primary-foreground hover:bg-admin-primary/90"
+					aria-label="Open Theme Editor"
+				>
+					<Palette class="h-5 w-5" />
+				</Button>
+			{/snippet}
+		</Dialog.Trigger>
 	</div>
-	<div class="flex text-xs items-center gap-3">
-		<label for="theme-select" class="w-24">Admin Hover</label>
-		<input
-			type="color"
-			name="themeColor"
-			id="themeColor"
-			bind:value={adminHover}
-		/>
-	</div>
-	<div class="flex text-xs items-center gap-3">
-		<label for="theme-select" class="w-24">Admin Text</label>
-		<input
-			type="color"
-			name="themeColor"
-			id="themeColor"
-			bind:value={adminText}
-		/>
-	</div>
-	<div class="flex text-xs items-center gap-3">
-		<label for="theme-select" class="w-24">Admin Bg</label>
-		<input
-			type="color"
-			name="themeColor"
-			id="themeColor"
-			bind:value={adminBg}
-		/>
-	</div>
-	<div class="flex text-xs items-center gap-3">
-		<label for="theme-select" class="w-24">Admin Bg 2</label>
-		<input
-			type="color"
-			name="themeColor"
-			id="themeColor"
-			bind:value={admin2Bg}
-		/>
-	</div>
-</div>
+
+	<Dialog.Content class="sm:max-w-[425px]">
+		<Dialog.Header>
+			<Dialog.Title>Theme Settings</Dialog.Title>
+			<Dialog.Description>
+				Tired of reviewing all day? Phew! Change the colors of the dashboard to
+				your liking!
+			</Dialog.Description>
+		</Dialog.Header>
+
+		<div class="py-4">
+			<AdminThemeEditor
+				bind:adminPrimary
+				bind:adminHover
+				bind:adminText
+				bind:adminBg
+				bind:admin2Bg
+			/>
+		</div>
+	</Dialog.Content>
+</Dialog.Root>
 
 <style>
 	.bg {
