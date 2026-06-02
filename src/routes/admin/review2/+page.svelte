@@ -206,7 +206,7 @@
 
 					<div class="flex flex-col gap-y-5 h-full w-[50%]">
 						<h2 class="text-muted-foreground">Previous Changelogs</h2>
-						<div class="previous-changelogs w-full overflow-y-scroll">
+						<div class="previous-changelogs w-full overflow-y-scroll gap-y-4 flex flex-col">
 							{#each currentProject.log as log}
 								<div class="p-2 border rounded-lg w-full">
 								<div class="flex items-center gap-2 justify-between">
@@ -219,11 +219,11 @@
 									</div>
 								</div>
 								<p class="feedback text-xs text-gray-300 user-not mt-2">
-									Heya, Nice project
+									{log.message.at(-1)?.userExternal}
 								</p>
-								<p class="notes text-xs text-gray-500 overrideJustification">
-									
-									sunt illo veniam, repudiandae eaque iusto est?
+								<p class="notes whitespace-pre-wrap text-xs text-gray-500 overrideJustification">
+									{log.message.at(-1)?.internalNote} <br/>
+									{log.message.at(-1)?.justification}
 								</p>
 							</div>
 							{/each}
