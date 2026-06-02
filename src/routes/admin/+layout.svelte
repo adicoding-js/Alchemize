@@ -7,7 +7,6 @@
 	import * as Dialog from "$lib/components/ui/dialog/index.js"
 	import { Button } from "$lib/components/ui/button/index.js"
 	import { Palette } from "lucide-svelte"
-	import Hint from "$lib/components/hint.svelte"
 
 	let { children } = $props()
 	const excludedRoutes = ["/admin", "/admin/login"]
