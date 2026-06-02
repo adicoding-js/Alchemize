@@ -171,6 +171,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			secure: true,
 			sameSite: "lax",
 			path: "/",
+			maxAge: 60 * 60 * 24 * 30 * 6,
 		})
 	}
 	const extraInfoData = await fetch("https://auth.hackclub.com/api/v1/me", {
