@@ -13,6 +13,7 @@
 		UserStar,
 		Package,
 		LockKeyhole,
+		Star,
 	} from "lucide-svelte"
 	const navItems = [
 		{
@@ -28,16 +29,22 @@
 			description: "Admin panel",
 		},
 		{
-			href: "/admin/review",
-			label: "Review",
-			icon: UserStar,
-			description: "Review Dash",
-		},
-		{
 			href: "/admin/fulfillement",
 			label: "Fulfillement",
 			icon: Package,
 			description: "Fulfillement",
+		},
+		{
+			href: "/admin/review",
+			label: "T1 Review",
+			icon: Star,
+			description: "Tier 1 review Dash",
+		},
+		{
+			href: "/admin/review2",
+			label: "T2 Review",
+			icon: UserStar,
+			description: "Tier 2 review Dash",
 		},
 		{
 			href: "/admin/super-admin",
