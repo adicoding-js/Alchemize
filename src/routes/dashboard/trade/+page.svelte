@@ -101,21 +101,20 @@
 				</div>
 			</div>
 			<!-- second card goes here -->
-			<div
-				class="h-full w-full flex flex-col gap-y-4 items-center justify-between py-15"
-			>
+			<div class="h-full w-full flex flex-col items-center gap-y-6 py-15">
 				<!-- just a small effect i liked hehe (this was the hardest phew) -->
+
 				<div
-					class="flask bg-black rounded-full p-5 shadow-primary animate-pulse"
+					class="flask bg-black/50 rounded-full p-8 shadow-primary animate-pulse"
 				>
-					<FlaskConical class="h-15 w-15 text-primary " />
+					<FlaskConical class="h-20 w-20 text-primary " />
 				</div>
 				<div class="flex flex-col items-center justify-start gap-y-2">
 					<Button
 						class="px-10 py-6  font-alchemize shadow-black rounded-full text-xl hover:scale-102 transition"
 					>
 						<!-- sounds cool eh? -->
-						Convert...
+						Convert stones
 					</Button>
 				</div>
 			</div>
@@ -135,7 +134,7 @@
 					<!-- replicated the stone card but made a few chnages like center align -->
 					<div class="w-full flex flex-col items-center justify-start gap-y-3">
 						<h2
-							class="text-primary text-sm font-semibold uppercase tracking-wider"
+							class="text-red-900 text-shadow-md font-bold text-md uppercase tracking-wider"
 						>
 							Potion Mix
 						</h2>
