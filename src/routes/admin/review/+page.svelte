@@ -27,7 +27,7 @@
 	const generateChangelog = (project: Project)=>{
 		const hackatimeLine = `User tracked ${project.hours} hours on Hackatime project: ${project.hackatime}.\n`
 		const isUpdateLine = project.update ? "This submission is an update to a previous one.\n" : "This is the user's first submission for this project.\n"
-		const time = (project.log.length > 1 ? project.log[project.log.length - 1].deltaTime : project.hours)
+		const time = (project.log.length > 1 ? Math.floor(project.log[project.log.length - 1].deltaTime / 60) : project.hours)
 		const delta ="Delta is: "+  time + " hours \t Adjustment: Subtracted " + (overrideHours) + " hours from delta(New hours: " + (time - overrideHours) + ").\n"
 
 		let changes = ""
