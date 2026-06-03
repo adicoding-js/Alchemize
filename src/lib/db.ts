@@ -282,3 +282,13 @@ export const patchUserCurrency = async (email: string, currency: UserCurrency): 
         text: async () => JSON.stringify({ id: updatedUser[0].id + "", fields: updatedUser[0] } as airtableReplication),
     } as DBResponse;
 }
+export const getAllRefers = async (): Promise<DBResponse> => {
+    const refers = await db.select().from(refersTable);
+    const records = refers.map(refer => ({ id: refer.id + "", fields: refer }));
+    return {
+        ok: true,
+        status: 200,
+        json: async () => ({ records }),
+        text: async () => JSON.stringify({ records }),
+    } as DBResponse;
+}

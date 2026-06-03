@@ -3,6 +3,7 @@ import { USERID_ENCRYPTION_KEY, BASE_URL, AIRTABLE_CLIENT, AIRTABLE, SLACK_BOT_T
 import type { PageServerLoad } from './$types';
 import {WebClient} from "@slack/web-api"
 import type { AirtableReferRecord, Refers } from '$lib/types';
+import { getAllRefers } from '$lib/db';
 
 
 
@@ -76,14 +77,9 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     }
     const data = await request.json()
     const id = encodeURIComponent(XORencrypt(`${data.identity.id.slice(6)} ${data.identity.slack_id}`));
-    let referalsResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/refers`, {
-        headers: {
-            Authorization: `Bearer ${AIRTABLE}`,
-            "Content-Type": 'application/json'
-        }
-    });
+    let referalsResponse = await getAllRefers()
     if (!referalsResponse.ok) {
-        throw new Error(`Failed to fetch referals data: ${referalsResponse.statusText}`);
+        throw new Error(`Failed to fetch referals data: ${await referalsResponse.text()}`);
     }
     let referalsData: { records: AirtableReferRecord[] } = await referalsResponse.json();
     let myReferals = getMyReferals(data.identity.id.slice(6), referalsData.records);
