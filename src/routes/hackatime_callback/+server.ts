@@ -17,15 +17,9 @@ export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 	const clientId = env.HACKATIME_AUTH ?? env.PUBLIC_HACKATIME_AUTH;
 	const clientSecret = env.HACKATIME_SECRET;
 	const redirectUri = env.HACKATIME_REDIRECT ?? env.PUBLIC_HACKATIME_REDIRECT;
-	const airtableClient = env.AIRTABLE_CLIENT;
-	const airtableSecret = env.AIRTABLE;
-	// console.log(clientId, clientSecret, redirectUri, airtableClient, airtableSecret);
+
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, 'Missing Hackatime OAuth environment variables');
-	}
-
-	if (!airtableClient || !airtableSecret) {
-		throw error(500, 'Missing Airtable environment variables');
 	}
 
 	const tokenResponse = await fetch('https://hackatime.hackclub.com/oauth/token', {

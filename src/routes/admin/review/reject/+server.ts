@@ -1,6 +1,6 @@
 import type { Log, Project, AdminJWT } from "$lib/types"
 import jwt from "jsonwebtoken"
-import {ADMIN_JWT_SECRET, AIRTABLE, AIRTABLE_CLIENT} from "$env/static/private"
+import {ADMIN_JWT_SECRET} from "$env/static/private"
 import type { RequestHandler } from "@sveltejs/kit"
 import {error} from "@sveltejs/kit"
 import { patchProjectForShip } from "$lib/db"

@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@sveltejs/kit"
-import { AIRTABLE, AIRTABLE_CLIENT, BOT_AUTH } from "$env/static/private"
+import {  BOT_AUTH } from "$env/static/private"
 import {START_DATE} from "$env/static/private"
 import { getDataFromAccessToken } from "$lib/utils"
 import type { Log } from "$lib/types"

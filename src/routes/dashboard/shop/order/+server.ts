@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@sveltejs/kit"
-import { AIRTABLE, AIRTABLE_CLIENT, BOT_AUTH } from '$env/static/private';
+import { BOT_AUTH } from '$env/static/private';
 import itemsJson from "./../items.json"
 import looseJson from 'loose-json'
 import type { Item, UserCurrency } from "$lib/types"

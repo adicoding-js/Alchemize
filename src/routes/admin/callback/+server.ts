@@ -1,4 +1,4 @@
-import {ADMIN_HACKCLUB_SECRET, AIRTABLE, AIRTABLE_CLIENT, ADMIN_JWT_SECRET} from "$env/static/private"
+import {ADMIN_HACKCLUB_SECRET, ADMIN_JWT_SECRET} from "$env/static/private"
 import { PUBLIC_ADMIN_HACKCLUB_AUTH, PUBLIC_ADMIN_HACKCLUB_REDIRECT } from "$env/static/public"
 import { error, redirect } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
@@ -23,8 +23,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
     if (!code) {
         throw error(400, "Missing authorization code")
     }
-    const airtableClient = AIRTABLE_CLIENT
-    const airtableSecret = AIRTABLE
+
     const clientId = PUBLIC_ADMIN_HACKCLUB_AUTH
     const clientSecret = ADMIN_HACKCLUB_SECRET
     const redirectUri = PUBLIC_ADMIN_HACKCLUB_REDIRECT
@@ -32,9 +31,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
     if (!clientId || !clientSecret || !redirectUri) {
         throw error(500, "Missing OAuth environment variables")
     }
-    if (!airtableClient || !airtableSecret) {
-        throw error(500, "Missing Airtable environment variables")
-    }
+
 
     const tokenResponse = await fetch("https://auth.hackclub.com/oauth/token", {
         method: "POST",

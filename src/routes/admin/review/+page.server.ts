@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import jwt from "jsonwebtoken"
-import {ADMIN_JWT_SECRET, AIRTABLE, AIRTABLE_CLIENT} from "$env/static/private"
+import {ADMIN_JWT_SECRET} from "$env/static/private"
 import { redirect } from "@sveltejs/kit"
 import { getAllProjects } from '$lib/db';
 interface TokenPayload extends jwt.JwtPayload {

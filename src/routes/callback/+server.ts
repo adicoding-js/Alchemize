@@ -21,8 +21,6 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (!code) {
 		throw error(400, "Missing authorization code")
 	}
-	const airtableClient = env.AIRTABLE_CLIENT
-	const airtableSecret = env.AIRTABLE
 	const clientId = env.HACKCLUB_AUTH
 	const clientSecret = env.HACKCLUB_SECRET
 	const redirectUri = env.HACKCLUB_REDIRECT
@@ -30,9 +28,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, "Missing OAuth environment variables")
 	}
-	if (!airtableClient || !airtableSecret) {
-		throw error(500, "Missing Airtable environment variables")
-	}
+
 
 	const tokenResponse = await fetch("https://auth.hackclub.com/oauth/token", {
 		method: "POST",

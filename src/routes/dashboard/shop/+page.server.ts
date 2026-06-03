@@ -1,5 +1,4 @@
 import type { PageServerLoad } from './$types';
-import { AIRTABLE, AIRTABLE_CLIENT } from '$env/static/private';
 import itemsJson from "./items.json"
 import type { Item } from "$lib/types"
 import { getUserByEmail } from '$lib/db';

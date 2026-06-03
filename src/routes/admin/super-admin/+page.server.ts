@@ -1,5 +1,4 @@
 import type {PageServerLoad} from './$types';
-import {AIRTABLE, AIRTABLE_CLIENT} from "$env/static/private"
 import type {AirtableUser, User, UserCurrency} from "$lib/types"
 import { getAllUsers } from '$lib/db';
 const filterPII = (userData: AirtableUser): User => {

@@ -1,5 +1,5 @@
 import type { Log, UserCurrency, AdminJWT } from "$lib/types";
-import { AIRTABLE, AIRTABLE_CLIENT, THEME_MAPS_TO_CURRENCY , ADMIN_JWT_SECRET} from "$env/static/private"
+import { ADMIN_JWT_SECRET} from "$env/static/private"
 import {themeCurrencyMaps} from "$lib/themeCurrencyMaps"
 import type { RequestHandler } from "./$types";
 import {error} from "@sveltejs/kit"

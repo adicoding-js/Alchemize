@@ -1,5 +1,4 @@
 import type { Actions, PageServerLoad } from './$types';
-import { AIRTABLE, AIRTABLE_CLIENT } from '$env/static/private';
 import { jwtDecode } from 'jwt-decode';
 import { env } from '$env/dynamic/private';
 import { getDataFromAccessToken } from '$lib/utils';

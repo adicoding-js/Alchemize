@@ -1,5 +1,5 @@
 
-import { USERID_ENCRYPTION_KEY, BASE_URL, AIRTABLE_CLIENT, AIRTABLE, SLACK_BOT_TOKEN } from '$env/static/private';
+import { USERID_ENCRYPTION_KEY, BASE_URL,SLACK_BOT_TOKEN } from '$env/static/private';
 import type { PageServerLoad } from './$types';
 import {WebClient} from "@slack/web-api"
 import type { AirtableReferRecord, Refers } from '$lib/types';
