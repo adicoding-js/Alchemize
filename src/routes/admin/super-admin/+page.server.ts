@@ -1,6 +1,7 @@
 import type {PageServerLoad} from './$types';
 import {AIRTABLE, AIRTABLE_CLIENT} from "$env/static/private"
 import type {AirtableUser, User, UserCurrency} from "$lib/types"
+import { getAllUsers } from '$lib/db';
 const filterPII = (userData: AirtableUser): User => {
     return {
         email: userData.fields.email,
@@ -8,12 +9,7 @@ const filterPII = (userData: AirtableUser): User => {
     }
 }
 export const load: PageServerLoad = async ({cookies}) => {
-    const userRespone = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Users`, {
-        headers: {
-            'Authorization': `Bearer ${AIRTABLE}`,
-            "Content-Type": 'application/json'
-        }
-    })
+    const userRespone = await getAllUsers()
     const userData = await userRespone.json()
 
     return {userData: userData.records}

@@ -322,3 +322,13 @@ export const doesAdminExist = async (slackId: string): Promise<DBResponse> => {
         text: async () => JSON.stringify({ records }),
     } as DBResponse;
 }
+export const getAllUsers = async (): Promise<DBResponse> => {
+    const users = await db.select().from(userTable);
+    const records = users.map(user => ({ id: user.id + "", fields: user }));
+    return {
+        ok: true,
+        status: 200,
+        json: async () => ({ records }),
+        text: async () => JSON.stringify({ records }),
+    } as DBResponse;
+}
