@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken"
 import {ADMIN_JWT_SECRET, AIRTABLE, AIRTABLE_CLIENT} from "$env/static/private"
 import type { RequestHandler } from "@sveltejs/kit"
 import {error} from "@sveltejs/kit"
+import { patchProjectForShip } from "$lib/db"
+import { updated } from "$app/state"
 function updateLog(log: Log[], deltaTime: number, userExternal: string, name: string, internalNote: string, justification: string): Log[] {
 
     if (log.length === 0) {
@@ -37,25 +39,12 @@ export const POST: RequestHandler = async ({ request,cookies }) => {
         return error(401, "Unauthorized")
     }
     const {recordId, log, userExternal, internalNote, justification, decreaseTime} = await request.json()
-    if (!recordId || !log || !userExternal || !internalNote || !justification) {
+    if (!recordId || !log || !userExternal  || !justification) {
         return error(400, "Missing required fields")
     }
     const name = decoded.name
     const updatedLog = updateLog(JSON.parse(log), -decreaseTime, userExternal, name, internalNote, justification)
-    const logJson = JSON.stringify(updatedLog)
-    const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Projects/${recordId}`, {
-        method: "PATCH",
-        headers: {
-            Authorization: `Bearer ${AIRTABLE}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            fields: {
-                log: logJson,
-                status: "rejected"
-            }
-        }),
-    })
+    const response = await patchProjectForShip(recordId, updatedLog, "rejected")
     if (!response.ok) {
         const errorData = await response.json()
         console.error("Failed to update project log:", {

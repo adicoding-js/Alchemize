@@ -162,6 +162,16 @@ export const createReferRecord = async (referedEmail: string, referer: string, y
 }
 
 //Project Functions
+export const getAllProjects = async (): Promise<DBResponse> => {
+    const projects = await db.select().from(projectTable);
+    const records = projects.map(project => ({ id: project.id + "", fields: project }));
+    return {
+        ok: true,
+        status: 200,
+        json: async () => ({ records }),
+        text: async () => JSON.stringify({ records }),
+    } as DBResponse;
+}
 export const createProject = async (projectData: any): Promise<DBResponse> => {
     const { Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId } = projectData
     const newProject = await db.insert(projectTable).values({ Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId }).returning();
@@ -298,5 +308,17 @@ export const createOrder = async (orderData: any): Promise<DBResponse> => {
             id: newOrder
             [0].id + "", fields: newOrder[0]
         } as airtableReplication),
+    } as DBResponse;
+}
+
+//Admin Functions
+export const doesAdminExist = async (slackId: string): Promise<DBResponse> => {
+    const admins = await db.select().from(adminTable).where(eq(adminTable.slackId, slackId));
+    const records = admins.map(admin => ({ id: admin.id + "", fields: admin }));
+    return {
+        ok: true,
+        status: 200,
+        json: async () => ({ records }),
+        text: async () => JSON.stringify({ records }),
     } as DBResponse;
 }

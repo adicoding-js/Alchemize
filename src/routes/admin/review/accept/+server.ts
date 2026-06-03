@@ -4,6 +4,7 @@ import {themeCurrencyMaps} from "$lib/themeCurrencyMaps"
 import type { RequestHandler } from "./$types";
 import {error} from "@sveltejs/kit"
 import jwt from "jsonwebtoken"
+import { getUserByEmail, patchProjectForShip, patchUserCurrency } from "$lib/db";
 
 function updateLog(log: Log[], deltaTime: number, userExternal: string, name: string, internalNote: string, justification: string): [Log[], number] {
 
@@ -25,15 +26,7 @@ function updateLog(log: Log[], deltaTime: number, userExternal: string, name: st
 
 }
 async function updateUserCurrency(amount: number, userEmailId: string, currencyType: keyof UserCurrency) {
-    const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Users?filterByFormula={email}='${encodeURIComponent(userEmailId)}'`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${AIRTABLE}`,
-
-            "Content-Type": "application/json",
-
-        }
-    })
+    const response = await getUserByEmail(userEmailId)
     if (!response.ok) {
         const errorData = await response.json()
         throw new Error(`Failed to fetch user: ${errorData.error.message}`)
@@ -46,20 +39,14 @@ async function updateUserCurrency(amount: number, userEmailId: string, currencyT
     const userRecord = data.records[0]
     const currentCurrency = JSON.parse(userRecord.fields.currency) || {} as UserCurrency
     currentCurrency[currencyType] = (currentCurrency[currencyType] || 0) + amount
-    const updateResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Users/${userRecord.id}`, {
-        method: "PATCH",
-        headers: {
-            Authorization: `Bearer ${AIRTABLE}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            fields: {
-                currency: JSON.stringify(currentCurrency)
-            }
-        }),
-    })
+    const updateResponse = await patchUserCurrency(userRecord.fields.email, currentCurrency)
     if (!updateResponse.ok) {
         const errorData = await updateResponse.json()
+        console.error("Failed to update user currency:", {
+            status: updateResponse.status,
+            error: errorData,
+            timestamp: new Date().toISOString()
+        })
         throw new Error(`Failed to update user currency: ${errorData.error.message}`)
     }
 }
@@ -90,19 +77,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     const oldLog = JSON.parse(log) as Log[]
     const [newLog, newDeltaTime] = updateLog(oldLog, -decreaseTime, userExternal, approver, internalNote, justification)
     const logJson = JSON.stringify(newLog)
-    const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CLIENT}/Projects/${recordId}`, {
-        method: "PATCH",
-        headers: {
-            Authorization: `Bearer ${AIRTABLE}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            fields: {
-                log: logJson,
-                status: "accepted"
-            }
-        }),
-    })
+    const response = await patchProjectForShip(recordId, newLog, "accepted")
     if (!response.ok) {
         const errorData = await response.json()
         console.error("Failed to update project log:", {

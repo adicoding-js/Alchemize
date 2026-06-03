@@ -3,6 +3,7 @@ import { PUBLIC_ADMIN_HACKCLUB_AUTH, PUBLIC_ADMIN_HACKCLUB_REDIRECT } from "$env
 import { error, redirect } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
 import jwt from "jsonwebtoken"
+import { doesAdminExist } from "$lib/db"
 
 interface AirtableUser {
     slackId: string;
@@ -58,11 +59,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
         )
     }
     const decodedToken = jwt.decode(tokenBody.id_token) as { slack_id: string, email: string, name: string } | null
-    const airtableRes = await fetch(`https://api.airtable.com/v0/${airtableClient}/admins?filterByFormula={slackId}="${decodedToken?.slack_id}"`, {
-        headers: {
-            Authorization: `Bearer ${airtableSecret}`,
-        },
-    })
+    const airtableRes = await doesAdminExist(decodedToken?.slack_id || "")
     if (!airtableRes.ok) {
         console.error("Failed to fetch user data from Airtable", await airtableRes.text())
         throw error(500, "Failed to fetch user data from Airtable")
