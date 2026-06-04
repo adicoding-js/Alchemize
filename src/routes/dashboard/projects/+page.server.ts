@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/private';
 import { getDataFromAccessToken } from '$lib/utils';
 import { getProjectsByOwner, createProject, updateProject } from '$lib/db';
 export const actions = {
-	create: async (event) => {
+    create: async (event) => {
 
         const accessToken = event.cookies.get('access_token_new');
         if (!accessToken) {
@@ -22,6 +22,27 @@ export const actions = {
         const oldProject = formData.get('projectUpdate') as string;
         const hackatimeProject = formData.get('hackatime') as string;
         const theme = formData.get('theme') as string;
+        const tempFormData = new FormData();
+        const screenshot = formData.get('screenshot') as File;
+        tempFormData.append('file', screenshot);
+        const cdnResponse = await fetch('https://cdn.hackclub.com/api/v4/upload', {
+            method: 'POST',
+            headers: { 'Authorization': "Bearer "+ env.CDN_UPLOAD_SECRET },
+            body: tempFormData
+        });
+        if (!cdnResponse.ok) {
+            const errorData = await cdnResponse.json();
+            const errorCode = errorData.error?.type || 'UNKNOWN_ERROR';
+            const errorText = errorData.error?.message || 'An error occurred while uploading the screenshot';
+            console.error('CDN upload failed:', {
+                status: cdnResponse.status,
+                errorCode,
+                errorText,
+                timestamp: new Date().toISOString()
+            });
+            throw new Error(`Screenshot upload failed: ${errorText}. Please notify TheUtkarsh8939 on slack with the error code: ${errorCode}`);
+        }
+        const {url} = await cdnResponse.json();
         const response = await createProject({
             Name: projectName,
             description: projectDescription,
@@ -38,16 +59,19 @@ export const actions = {
             Theme: theme,
             address: "",
             birthdate: "",
-            slackId: slackId
+            slackId: slackId,
+            firstName: data.first_name,
+            lastName: data.last_name,
+            screenshot: url
         });
-       
+
 
         // Error handling
         if (!response.ok) {
             const errorData = await response.json();
             const errorCode = errorData.error?.type || 'UNKNOWN_ERROR';
             const errorText = errorData.error?.message || 'An error occurred while creating the project';
-            
+
             console.error('Project creation failed:', {
                 status: response.status,
                 errorCode,
@@ -63,16 +87,16 @@ export const actions = {
                     message: `${errorText}. Please notify TheUtkarsh8939 on slack`
                 }
             };
-        }else{
-            return{
+        } else {
+            return {
                 success: true,
             }
         }
 
-	},
+    },
     update: async (event) => {
-        		
-   const accessToken = event.cookies.get('access_token_new');
+
+        const accessToken = event.cookies.get('access_token_new');
         if (!accessToken) {
             return { error: 'No access token found' };
         }
@@ -127,24 +151,24 @@ export const actions = {
 
     }
 } satisfies Actions;
-export const load:PageServerLoad = async ({cookies})=>{
-       const accessToken = cookies.get('access_token_new') ?? cookies.get('access_token');
-        if (!accessToken) {
-            return { error: 'No access token found' };
-        }
-        const email = (await getDataFromAccessToken(accessToken)).email;
+export const load: PageServerLoad = async ({ cookies }) => {
+    const accessToken = cookies.get('access_token_new') ?? cookies.get('access_token');
+    if (!accessToken) {
+        return { error: 'No access token found' };
+    }
+    const email = (await getDataFromAccessToken(accessToken)).email;
     let hackatimeAccessToken = cookies.get('hackatime_token');
     let hacks = ""
     if (hackatimeAccessToken) {
 
-        let hackatimes = await fetch(`https://hackatime.hackclub.com/api/v1/authenticated/projects?include_archived=false&start=${env.START_DATE}`,{
+        let hackatimes = await fetch(`https://hackatime.hackclub.com/api/v1/authenticated/projects?include_archived=false&start=${env.START_DATE}`, {
             headers: {
                 Authorization: `Bearer ${hackatimeAccessToken}`,
                 "Content-Type": 'application/json'
             }
         })
         hacks = await hackatimes.json()
-        
+
     }
 
     if (!accessToken) {
@@ -154,7 +178,7 @@ export const load:PageServerLoad = async ({cookies})=>{
     }
     let projectsResponse = await getProjectsByOwner(email);
     const projectsData = await projectsResponse.json();
-  
+
     return {
         projects: projectsData.records,
         hacks: hacks

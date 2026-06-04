@@ -9,7 +9,7 @@
 	let { data } = $props()
 	console.log(data)
 	let detailsOpen = $state(false)
-	let projects = $derived(data?.projects ?? [])
+	let projects: AirtableProject[] = $derived(data?.projects ?? [])
 	console.log(projects)
 	let userExternal = $state("")
 	let internalNote = $state("")
@@ -118,6 +118,9 @@
 				userExternal: feedback,
 				justification: autogenChangelog,
 				decreaseTime: overrideHours,
+				slackId: project.submittedBy,
+				projectName: project.name,
+				projectLink: project.code,
 			}),
 		})
 		if (!response.ok) {
@@ -128,6 +131,18 @@
 		const { newLog } = await response.json()
 		project.log = newLog
 		rejectLoader = false
+				projects = projects.map(p => {
+			if (p.id === project.id) {
+				return {
+					...p,
+					fields: {
+						...p.fields,
+						status: "rejected",
+					},
+				}
+			}
+			return p
+		})
 	}
 	const acceptProject = async (
 		project: Project,
@@ -146,6 +161,9 @@
 			decreaseTime: overrideHours,
 			theme: project.category,
 			userEmailId: project.owner,
+			slackId: project.submittedBy,
+			projectName: project.name,
+			projectLink: project.code,
 		})
 		const response = await fetch("/admin/review/accept", {
 			method: "POST",
@@ -162,6 +180,10 @@
 				decreaseTime: overrideHours,
 				theme: project.category,
 				userEmailId: project.owner,
+				slackId: project.submittedBy,
+				projectName: project.name,
+				projectLink: project.code,
+				
 			}),
 		})
 		if (!response.ok) {
@@ -172,6 +194,19 @@
 		const { newLog } = await response.json()
 		project.log = newLog
 		acceptLoader = false
+
+		projects = projects.map(p => {
+			if (p.id === project.id) {
+				return {
+					...p,
+					fields: {
+						...p.fields,
+						status: "accepted",
+					},
+				}
+			}
+			return p
+		})
 	}
 	// let project = null
 </script>

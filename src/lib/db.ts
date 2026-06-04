@@ -8,7 +8,7 @@ export const userTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userid: varchar({ length: 255 }).notNull(),
     email: varchar({ length: 455 }).notNull(),
-    hackatime: varchar({ length: 1000 }).notNull(),
+    hackatime: varchar({ length: 1000 }),
     currency: varchar({ length: 2000 }).notNull(),
 })
 export const projectTable = pgTable("projects", {
@@ -29,6 +29,10 @@ export const projectTable = pgTable("projects", {
     birthdate: varchar({ length: 255 }).notNull(),
     slackId: varchar({ length: 255 }).notNull(),
     status: varchar({ length: 255 }).notNull(),
+    firstName: varchar({ length: 255 }).notNull(),
+    lastName: varchar({ length: 255 }).notNull(),
+    screenshot: varchar({ length: 1000 }).notNull(),
+
 })
 export const refersTable = pgTable("refers", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -56,6 +60,25 @@ export const adminTable = pgTable("admins", {
     roles: varchar({ length: 355 }).notNull(),
     name: varchar({ length: 255 }).notNull(),
     nda: varchar({ length: 255 }).notNull(),
+})
+export const justifications = pgTable("justifications", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    projectId: varchar({ length: 255 }).notNull(),
+    email: varchar({ length: 455 }).notNull(),
+    demo: varchar({ length: 1000 }).notNull(),
+    code: varchar({ length: 1000 }).notNull(),
+    screenshot: varchar({ length: 1000 }).notNull(),
+    description: varchar({ length: 2000 }).notNull(),
+    address: varchar({ length: 2000 }).notNull(),
+    city: varchar({ length: 255 }).notNull(),
+    state: varchar({ length: 255 }).notNull(),
+    country: varchar({ length: 255 }).notNull(),
+    zip: varchar({ length: 255 }).notNull(),
+    birthdate: varchar({ length: 255 }).notNull(),
+    overrideHoursSpent: varchar({ length: 255 }).notNull(),
+    justification: varchar({ length: 5000 }).notNull(),
+    firstName: varchar({ length: 255 }).notNull(),
+    lastName: varchar({ length: 255 }).notNull(),
 })
 
 // Response Interface
@@ -173,8 +196,8 @@ export const getAllProjects = async (): Promise<DBResponse> => {
     } as DBResponse;
 }
 export const createProject = async (projectData: any): Promise<DBResponse> => {
-    const { Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId } = projectData
-    const newProject = await db.insert(projectTable).values({ Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId }).returning();
+    const { Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId, firstName, lastName, screenshot } = projectData
+    const newProject = await db.insert(projectTable).values({ Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId, firstName, lastName, screenshot }).returning();
     return {
         ok: true,
         status: 201,
@@ -330,5 +353,32 @@ export const getAllUsers = async (): Promise<DBResponse> => {
         status: 200,
         json: async () => ({ records }),
         text: async () => JSON.stringify({ records }),
+    } as DBResponse;
+}
+export const addToJustifications = async (justificationData: {
+    projectId: string,
+    email: string,
+    demo: string,
+    code: string,
+    screenshot: string,
+    description: string,
+    address: string,
+    city: string,
+    state: string,
+    country: string,
+    zip: string,
+    birthdate: string,
+    overrideHoursSpent: string,
+    justification: string,
+    firstName: string,
+    lastName: string
+}): Promise<DBResponse> => {
+    const { projectId, email, demo, code, screenshot, description, address, city, state, country, zip, birthdate, overrideHoursSpent, justification, firstName, lastName } = justificationData
+    const newJustification = await db.insert(justifications).values({ projectId, email, demo, code, screenshot, description, address, city, state, country, zip, birthdate, overrideHoursSpent, justification, firstName, lastName }).returning();
+    return {
+        ok: true,
+        status: 201,
+        json: async () => ({ id: newJustification[0].id + "", fields: newJustification[0] } as airtableReplication),
+        text: async () => JSON.stringify({ id: newJustification[0].id + "", fields: newJustification[0] } as airtableReplication),
     } as DBResponse;
 }
