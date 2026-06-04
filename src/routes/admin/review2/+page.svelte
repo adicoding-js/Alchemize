@@ -90,20 +90,15 @@ Full review log available at link:{insert link here}
 Signed by ${data.name}, T2 Reviewer
  `
 	}
-	let changelogs = $state("")
-	let projectDescription = $state("")
-	let reasonForOverride = $state("")
-	let gitCommits = $state(0)
-	let subtraction = $state(0)
+	let changelogs = ""
+	let projectDescription = ""
+	let reasonForOverride = ""
+	let gitCommits = 0
+	let subtraction = 0
 
 	$effect(() => {
-		if (currentProject.name){
+		if (currentProject.name) {
 			generateFullJustification()
-			changelogs = ""
-			projectDescription = ""
-			reasonForOverride = ""
-			gitCommits = 0
-			subtraction = 0
 		}
 	})
 </script>
@@ -187,21 +182,21 @@ Signed by ${data.name}, T2 Reviewer
 							</div>
 							<div class="links flex items-center justify-center gap-x-5">
 								<a
-									href={"/"}
+									href={currentProject.demo}
 									class="hover:scale-104 transition px-2 py-0.5 bg-admin-primary/30 rounded-md cursor-pointer"
 									target="_blank"
 								>
 									Demo
 								</a>
 								<a
-									href={"/"}
+									href={currentProject.code}
 									class="hover:scale-104 transition px-2 py-0.5 bg-admin-primary/30 rounded-md cursor-pointer"
 									target="_blank"
 								>
 									Repo
 								</a>
 								<a
-									href={"/"}
+									href={currentProject.code}
 									class="hover:scale-104 transition px-2 py-0.5 bg-admin-primary/30 rounded-md cursor-pointer"
 									target="_blank"
 								>
@@ -221,6 +216,8 @@ Signed by ${data.name}, T2 Reviewer
 								<Textarea
 									class="resize-none h-30 overflow-y-auto	"
 									placeholder="Gimme a nice brief description of the project.."
+									bind:value={projectDescription}
+									oninput={generateFullJustification}
 								/>
 							</div>
 							<div class="flex items-center gap-3 justify-start gap-y-1 w-full">
@@ -231,6 +228,8 @@ Signed by ${data.name}, T2 Reviewer
 									type="number"
 									class="resize-none h-10 w-40 overflow-y-auto	"
 									placeholder="Commits?"
+									bind:value={gitCommits}
+									oninput={generateFullJustification}
 								/>
 							</div>
 							<div
@@ -243,6 +242,8 @@ Signed by ${data.name}, T2 Reviewer
 								<Textarea
 									class="resize-none h-30 overflow-y-auto	"
 									placeholder="The changes are..."
+									bind:value={changelogs}
+									oninput={generateFullJustification}
 								/>
 							</div>
 							<div
@@ -252,17 +253,20 @@ Signed by ${data.name}, T2 Reviewer
 									<h2 class="text-muted-foreground text-lg">
 										Override hours (optional)
 									</h2>
-									<Input class="w-[20%]" type="number" value={2} min="0" />
+									<Input class="w-[20%]" type="number" min="0" bind:value={subtraction} oninput={generateFullJustification} />
 								</div>
 								<Textarea
 									class="resize-none overflow-y-auto h-30"
 									placeholder="Reason for overriding..."
+									bind:value={reasonForOverride}
+									oninput={generateFullJustification}
 								/>
 							</div>
 							<div class="controls flex gap-x-3">
 								<Button
 									class="bg-red-900 w-[45%]"
 									onclick={() => (justificationOpen = true)}
+									oninput={generateFullJustification}
 								>
 									View Generated Justification
 								</Button>
@@ -321,7 +325,7 @@ Signed by ${data.name}, T2 Reviewer
 	</div>
 </main>
 
-<ProjectDetailsDialog bind:open={detailsOpen} {project} />
+<ProjectDetailsDialog bind:open={detailsOpen} project={currentProject} />
 {#if justificationOpen}
 <div
 	class="generatedJustificationOverlay w-screen h-screen absolute top-0 bg-black/80 z-50 flex items-center justify-center"

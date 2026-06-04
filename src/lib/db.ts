@@ -57,6 +57,25 @@ export const adminTable = pgTable("admins", {
     name: varchar({ length: 255 }).notNull(),
     nda: varchar({ length: 255 }).notNull(),
 })
+export const justifications = pgTable("justifications", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    projectId: varchar({ length: 255 }).notNull(),
+    email: varchar({ length: 455 }).notNull(),
+    demo: varchar({ length: 1000 }).notNull(),
+    code: varchar({ length: 1000 }).notNull(),
+    screenshot: varchar({ length: 1000 }).notNull(),
+    description: varchar({ length: 2000 }).notNull(),
+    address: varchar({ length: 2000 }).notNull(),
+    city: varchar({ length: 255 }).notNull(),
+    state: varchar({ length: 255 }).notNull(),
+    country: varchar({ length: 255 }).notNull(),
+    zip: varchar({ length: 255 }).notNull(),
+    birthdate: varchar({ length: 255 }).notNull(),
+    overrideHoursSpent: varchar({ length: 255 }).notNull(),
+    justification: varchar({ length: 5000 }).notNull(),
+    firstName: varchar({ length: 255 }).notNull(),
+    lastName: varchar({ length: 255 }).notNull(),
+})
 
 // Response Interface
 export interface DBResponse {
