@@ -8,7 +8,7 @@ export const userTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userid: varchar({ length: 255 }).notNull(),
     email: varchar({ length: 455 }).notNull(),
-    hackatime: varchar({ length: 1000 }).notNull(),
+    hackatime: varchar({ length: 1000 }),
     currency: varchar({ length: 2000 }).notNull(),
 })
 export const projectTable = pgTable("projects", {
