@@ -6,7 +6,7 @@
 	import { Checkbox } from "$lib/components/ui/checkbox"
 	import { Label } from "$lib/components/ui/label"
 	import { Button } from "$lib/components/ui/button"
-
+	import type {AirtableProject} from "$lib/types"
 	type Log = {
 		status: 0 | 1 | 2 //0 = Pending, 1 = Approved, 2 = Rejected
 		timestamp: string
@@ -22,24 +22,7 @@
 		timestamp: string
 		reviewerName?: string
 	}
-	interface Project {
-		id: string
-		createdTime: string
-		fields: {
-			Name: string
-			description: string
-			code?: string
-			demo?: string
-			type: string
-			update?: boolean
-			hackatime: string
-			journals: string
-			languages: string
-			log: string
-			owner: string
-			status: string
-		}
-	}
+
 	type HackatimeProject = {
 		name?: string
 		total_seconds?: number
@@ -57,7 +40,7 @@
 	}: {
 		open: boolean
 		mode: "create" | "update"
-		project?: Project | null
+		project?: AirtableProject | null
 		availableHacks: HackatimeProject[]
 		onship: (agr0: string) => void
 		showRotator?: boolean
@@ -75,6 +58,7 @@
 	const shippedTime = $derived.by(() =>
 		log.reduce((total, entry) => total + entry.deltaTime, 0)
 	)
+	console.log(project?.fields)
 	const hoursShipped = $derived(Math.floor((shippedTime * 10) / 60) / 10)
 	const selectClass =
 		"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -182,6 +166,7 @@
 						name="description"
 						required
 						placeholder="Project Description (Markdown Allowed)"
+						style="background:url({project?.fields.screenshot || ""}) no-repeat center center / cover;"
 						class="h-32"
 						value={project?.fields.description ?? ""}
 					/>
@@ -307,7 +292,7 @@
 						<Textarea
 							id="description"
 							name="description"
-							required
+						
 							placeholder="What did you add/modify? (Markdown Allowed)"
 							class="h-32"
 							bind:value={changelog}
