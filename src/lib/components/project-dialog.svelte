@@ -133,24 +133,22 @@
 								</h1>
 							</div>
 						{:else}
-						<div
-							class="reviewEntry border-gray-700 border w-full px-2 py-2 rounded-sm rounded-r-lg border-l-amber-700 border-l-5"
-						>
-							<p class=" pr-30 text-gray-300 ">{msg.userExternal}</p>
-							<h1 class="text-xs text-gray-400">
-								New Ship at {new Date(
-									msg.timestamp
-								).toLocaleString()}
-							</h1>
-						</div>
+							<div
+								class="reviewEntry border-gray-700 border w-full px-2 py-2 rounded-sm rounded-r-lg border-l-amber-700 border-l-5"
+							>
+								<p class=" pr-30 text-gray-300">{msg.userExternal}</p>
+								<h1 class="text-xs text-gray-400">
+									New Ship at {new Date(msg.timestamp).toLocaleString()}
+								</h1>
+							</div>
 						{/if}
-						
 					{/each}
 				{/each}
 			</div>
 		{/if}
 		<div class="overflow-y-auto flex-1 px-6 pb-6">
 			<form
+				enctype="multipart/form-data"
 				method="POST"
 				action={mode === "create" ? "?/create" : "?/update"}
 				class="flex flex-col gap-6 pt-4"
@@ -210,7 +208,18 @@
 						value={project?.fields.demo ?? ""}
 					/>
 				</div>
-
+				{#if mode === "create"}
+					<div class="flex flex-col gap-2">
+						<Label for="demo">Screenshot</Label>
+						<Input
+							type="file"
+							id="screenshot"
+							name="screenshot"
+							placeholder="https://example.com/screenshot"
+							accept="image/*"
+						/>
+					</div>
+				{/if}
 				<div class="flex flex-col gap-2">
 					<Label for="type">Type</Label>
 					<select id="type" name="type" class={selectClass}>

@@ -29,6 +29,10 @@ export const projectTable = pgTable("projects", {
     birthdate: varchar({ length: 255 }).notNull(),
     slackId: varchar({ length: 255 }).notNull(),
     status: varchar({ length: 255 }).notNull(),
+    firstName: varchar({ length: 255 }).notNull(),
+    lastName: varchar({ length: 255 }).notNull(),
+    screenshot: varchar({ length: 1000 }).notNull(),
+
 })
 export const refersTable = pgTable("refers", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -192,8 +196,8 @@ export const getAllProjects = async (): Promise<DBResponse> => {
     } as DBResponse;
 }
 export const createProject = async (projectData: any): Promise<DBResponse> => {
-    const { Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId } = projectData
-    const newProject = await db.insert(projectTable).values({ Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId }).returning();
+    const { Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId, firstName, lastName, screenshot } = projectData
+    const newProject = await db.insert(projectTable).values({ Name, description, type, demo, code, status, log, hackatime, languages, update, journals, owner, Theme, address, birthdate, slackId, firstName, lastName, screenshot }).returning();
     return {
         ok: true,
         status: 201,
