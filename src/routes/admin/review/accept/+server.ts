@@ -106,7 +106,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             "Authorization": `Bearer ${BOT_AUTH}`
         },
         body: JSON.stringify(
-        { "user_id": slackId, "project_name": projectName, "project_link": projectLink, "reviewer_id": approver, "feedback": userExternal, "currencies": `${Math.floor(newDeltaTime / 60)} ${currencyType}` }
+        { "user_id": slackId, "project_name": projectName, "project_link": projectLink, "reviewer_id": decoded.slackId, "feedback": userExternal, "currencies": `${Math.floor(newDeltaTime / 60)} ${currencyType}` }
         )
     })
     if (!botResponse.ok) {
