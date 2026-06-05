@@ -6,7 +6,8 @@
 	import { Checkbox } from "$lib/components/ui/checkbox"
 	import { Label } from "$lib/components/ui/label"
 	import { Button } from "$lib/components/ui/button"
-	import type {AirtableProject} from "$lib/types"
+	import type { AirtableProject } from "$lib/types"
+	import { countCharacters } from "$lib/utils"
 	type Log = {
 		status: 0 | 1 | 2 //0 = Pending, 1 = Approved, 2 = Rejected
 		timestamp: string
@@ -28,6 +29,8 @@
 		total_seconds?: number
 	}
 	let changelog = $state("")
+	let changelogCharCount = $derived(countCharacters(changelog))
+
 	let showSecondRotator = $state(false)
 	let {
 		open = $bindable(),
@@ -46,6 +49,8 @@
 		showRotator?: boolean
 		invalidater?: () => void
 	} = $props()
+		let description = $derived(project?.fields.description)
+	let descriptionCharCount = $derived(countCharacters(description || ""))
 	// console.log("log1", project)
 	const log = $derived.by(() => {
 		const logJson = project?.fields.log || "[]"
@@ -161,14 +166,27 @@
 
 				<div class="flex flex-col gap-2">
 					<Label for="description">Project Description</Label>
+					{#if mode==="create"}
+					<div
+						class="w-[clamp(20px,50%,500px)] {descriptionCharCount < 20
+							? 'bg-amber-800'
+							: 'bg-green-800'} h-4 text-xs flex items-center px-5 gap-3 rounded-lg"
+					>
+						<i class="fa-solid fa-info"></i>
+						{descriptionCharCount < 20
+							? `Add ${20 - descriptionCharCount} more characters`
+							: "Ok"}
+					</div>
+					{/if}
 					<Textarea
 						id="description"
 						name="description"
 						required
 						placeholder="Project Description (Markdown Allowed)"
-						style="background:url({project?.fields.screenshot || ""}) no-repeat center center / cover;"
+						style="background:url({project?.fields.screenshot ||
+							''}) no-repeat center center / cover;"
 						class="h-32"
-						value={project?.fields.description ?? ""}
+						bind:value={description}
 					/>
 				</div>
 
@@ -278,6 +296,12 @@
 					type="submit"
 					variant="outline"
 					class="w-40 border-red-500 border-dashed"
+					onclick={() => {
+						if (mode === "create" && descriptionCharCount < 20) {
+							alert("Please provide a description with at least 20 characters.")
+							return
+						}
+					}}
 				>
 					{#if showSecondRotator}
 						<div
@@ -289,10 +313,19 @@
 				{#if mode === "update"}
 					<div class="flex flex-col gap-2 mt-10">
 						<Label for="description">Changelog (Required for shipping)</Label>
+						<div
+							class="w-[clamp(20px,50%,500px)] {changelogCharCount < 20
+								? 'bg-amber-800'
+								: 'bg-green-800'} h-7 flex items-center px-5 gap-3 rounded-lg"
+						>
+							<i class="fa-solid fa-info"></i>
+							{changelogCharCount < 20
+								? `Add ${20 - changelogCharCount} more characters`
+								: "Ok to ship"}
+						</div>
 						<Textarea
 							id="description"
 							name="description"
-						
 							placeholder="What did you add/modify? (Markdown Allowed)"
 							class="h-32"
 							bind:value={changelog}

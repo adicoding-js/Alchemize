@@ -57,7 +57,7 @@
 	let showRotator = $state(false)
 
 	async function shipProject(changelog: string) {
-		if (changelog.trim() === "") {
+		if (changelog.trim().length < 20) {
 			alert("Please provide a changelog before shipping.")
 			return
 		}

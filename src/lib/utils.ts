@@ -49,3 +49,6 @@ export function getHackatimeProjects(payload: unknown): HackatimeProject[] {
         ? (maybeProjects as HackatimeProject[])
         : []
 }
+export const countCharacters = (str: string) => {
+    return str.trim().length
+}
