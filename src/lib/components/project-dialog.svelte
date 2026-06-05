@@ -256,9 +256,9 @@
 						<Label for="theme">Theme</Label>
 						<select id="theme" name="theme" class={selectClass}>
 							<option value="" disabled selected>Select a theme</option>
-							<option value="Sci-fi">Sci-Fi</option>
-							<option value="anime">Anime</option>
-							<option value="tribute">Tribute</option>
+							<option value="endless">Endless</option>
+							<option value="no-internet">No Internet</option>
+							<option value="indie-game">Indie Gamedev</option>
 						</select>
 					</div>
 				{/if}
