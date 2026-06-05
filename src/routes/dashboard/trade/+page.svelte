@@ -2,8 +2,19 @@
 	import Button from "$lib/components/ui/button/button.svelte"
 	import Input from "$lib/components/ui/input/input.svelte"
 	import { FlaskConical } from "lucide-svelte"
+	import { currenciesToPotionMix } from "$lib/utils"
 	let { data } = $props()
-	console.log(data)
+	let redstoneAmount = $state(0)
+	let glowstoneAmount = $state(0)
+	let aquaRegiaAmount = $state(0)
+	let potionMixAmount = $state(0)
+	const calculatePotionMix = () => {
+		potionMixAmount = currenciesToPotionMix(
+			redstoneAmount,
+			glowstoneAmount,
+			aquaRegiaAmount,
+		)
+	}
 </script>
 
 <main class="w-full h-screen bg-gradbg">
@@ -49,7 +60,7 @@
 									Owned: {data.currencies?.redstone}
 								</span>
 							</div>
-							<Input type="number" value="0" class="h-8 text-sm" max={data.currencies?.redstone} min="0" />
+							<Input type="number" bind:value={redstoneAmount} oninput={calculatePotionMix} class="h-8 text-sm" max={data.currencies?.redstone} min="0"  />
 						</div>
 					</div>
 
@@ -73,7 +84,7 @@
 									Owned: {data.currencies?.glowstone}
 								</span>
 							</div>
-							<Input type="number" value="0" class="h-8 text-sm" max={data.currencies?.glowstone} min="0" />
+							<Input type="number" bind:value={glowstoneAmount} oninput={calculatePotionMix} class="h-8 text-sm" max={data.currencies?.glowstone} min="0" />
 						</div>
 					</div>
 
@@ -97,7 +108,7 @@
 									Owned: {data.currencies?.aqua_regia}
 								</span>
 							</div>
-							<Input type="number" value="0" class="h-8 text-sm" max={data.currencies?.aqua_regia} min="0" />
+							<Input type="number" bind:value={aquaRegiaAmount} oninput={calculatePotionMix} class="h-8 text-sm" max={data.currencies?.aqua_regia} min="0" />
 						</div>
 					</div>
 				</div>
@@ -140,7 +151,7 @@
 						>
 							Potion Mix
 						</h2>
-						<Input type="number" value="0" class="h-8 text-sm" readonly />
+						<Input type="number" bind:value={potionMixAmount} class="h-8 text-sm" readonly />
 						<span class="text-neutral-400 text-xs font-medium"> Owned: {data.currencies?.potion_mix} </span>
 					</div>
 				</div>

@@ -1,3 +1,4 @@
+import {currencyValueRelativeToPotionMix} from "./themeCurrencyMaps";
 interface Data {
     id: string,
     email: string,
@@ -51,4 +52,28 @@ export function getHackatimeProjects(payload: unknown): HackatimeProject[] {
 }
 export const countCharacters = (str: string) => {
     return str.trim().length
+}
+export const currenciesToPotionMix = (redstone: number, glowstone: number, aquaRegia: number) => {
+    let values = currencyValueRelativeToPotionMix
+    if (redstone>0 && glowstone<1 && aquaRegia<1) {
+        return redstone*values.redstone
+    }else if (glowstone>0 && redstone<1 && aquaRegia<1) {
+        return glowstone*values.glowstone
+    }else if (aquaRegia>0 && redstone<1 && glowstone<1) {
+        return aquaRegia*values.aqua_regia
+    }
+    if (redstone>0 && glowstone>0 && aquaRegia<1) {
+        const bonus = Math.min(redstone*values.bonus, glowstone*values.bonus)
+        return redstone*values.redstone + glowstone*values.glowstone + bonus
+    }else if (redstone>0 && aquaRegia>0 && glowstone<1) {
+        const bonus = Math.min(redstone*values.bonus, aquaRegia*values.bonus)
+        return redstone*values.redstone + aquaRegia*values.aqua_regia + bonus
+    }else if (glowstone>0 && aquaRegia>0 && redstone<1) {
+        const bonus = Math.min(glowstone*values.bonus, aquaRegia*values.bonus)
+        return glowstone*values.glowstone + aquaRegia*values.aqua_regia + bonus
+    }else{
+        const bonus1 = Math.min(redstone*values.bonus, glowstone*values.bonus)
+        const bonus2 = Math.min(glowstone*values.bonus, aquaRegia*values.bonus)
+        return redstone*values.redstone + glowstone*values.glowstone + aquaRegia*values.aqua_regia + bonus1 + bonus2
+    }
 }
