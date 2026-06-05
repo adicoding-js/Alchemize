@@ -1,6 +1,6 @@
 import type { Log, Project, AdminJWT } from "$lib/types"
 import jwt from "jsonwebtoken"
-import {ADMIN_JWT_SECRET} from "$env/static/private"
+import {ADMIN_JWT_SECRET, BOT_AUTH} from "$env/static/private"
 import type { RequestHandler } from "@sveltejs/kit"
 import {error} from "@sveltejs/kit"
 import { patchProjectForShip } from "$lib/db"
@@ -38,8 +38,8 @@ export const POST: RequestHandler = async ({ request,cookies }) => {
     } catch (err) {
         return error(401, "Unauthorized")
     }
-    const {recordId, log, userExternal, internalNote, justification, decreaseTime} = await request.json()
-    if (!recordId || !log || !userExternal  || !justification) {
+    const {recordId, log, userExternal, internalNote, justification, decreaseTime, slackId, projectName, projectLink} = await request.json()
+    if (!recordId || !log || !userExternal  || !justification || !slackId || !projectName || !projectLink) {
         return error(400, "Missing required fields")
     }
     const name = decoded.name
@@ -54,5 +54,27 @@ export const POST: RequestHandler = async ({ request,cookies }) => {
         })
         return error(500, "Failed to update project log")
     }
+     const botResponse = await fetch("https://aoishik.qzz.io/review-reject", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${BOT_AUTH}`
+            },
+            body: JSON.stringify(
+            { "user_id": slackId, "project_name": projectName, "project_link": projectLink, "reviewer_id": decoded.slackId, "feedback": userExternal }
+            )
+        })
+        if (!botResponse.ok) {
+            console.warn(`Failed to send notification to bot for record ${recordId}:`, {
+                status: botResponse.status,
+                statusText: botResponse.statusText,
+                timestamp: new Date().toISOString(),
+                slackId: slackId,
+                projectName: projectName,
+                projectLink: projectLink
+            })
+                return new Response(JSON.stringify({ message: "Bot Failed to send notification", newLog: updatedLog }), { status: 207 })
+    
+        }
     return new Response(JSON.stringify({ message: "Log updated successfully", newLog: updatedLog }), { status: 200 })
 }

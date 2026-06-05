@@ -173,7 +173,7 @@
 				>
 					<i class="fa-solid fa-plus text-4xl"></i>
 					<h2 class="text-xl alchemizefont text-chart-5">New Project</h2>
-					<h2 class="text-md alchemizefont font-bold">WIP</h2>
+	
 				</div>
 			</button>
 
@@ -182,7 +182,7 @@
 					<div
 						class="border-red-500 border-dashed border  @container flex flex-col items-center justify-center gap-5 rounded-lg w-48 h-48 hover:bg-red-950/20 transition-colors"
 					>
-						<span class="text-[15cqi] text-center h-auto alchemizefont text-wrap text-chart-5 font-medium"
+						<span class="text-[10cqi] text-center h-auto alchemizefont text-wrap text-chart-5 "
 
 							>{project.fields.Name}</span
 						>
