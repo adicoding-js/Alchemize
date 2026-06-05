@@ -2,6 +2,8 @@
 	import Button from "$lib/components/ui/button/button.svelte"
 	import Input from "$lib/components/ui/input/input.svelte"
 	import { FlaskConical } from "lucide-svelte"
+	let { data } = $props()
+	console.log(data)
 </script>
 
 <main class="w-full h-screen bg-gradbg">
@@ -44,10 +46,10 @@
 									Redstone
 								</h2>
 								<span class="text-neutral-400 text-xs font-medium">
-									Owned: 236
+									Owned: {data.currencies?.redstone}
 								</span>
 							</div>
-							<Input type="number" value="0" class="h-8 text-sm" />
+							<Input type="number" value="0" class="h-8 text-sm" max={data.currencies?.redstone} min="0" />
 						</div>
 					</div>
 
@@ -68,10 +70,10 @@
 									Glowstone
 								</h2>
 								<span class="text-neutral-400 text-xs font-medium">
-									Owned: 124
+									Owned: {data.currencies?.glowstone}
 								</span>
 							</div>
-							<Input type="number" value="0" class="h-8 text-sm" />
+							<Input type="number" value="0" class="h-8 text-sm" max={data.currencies?.glowstone} min="0" />
 						</div>
 					</div>
 
@@ -92,10 +94,10 @@
 									Aqua Regia
 								</h2>
 								<span class="text-neutral-400 text-xs font-medium">
-									Owned: 4
+									Owned: {data.currencies?.aqua_regia}
 								</span>
 							</div>
-							<Input type="number" value="0" class="h-8 text-sm" />
+							<Input type="number" value="0" class="h-8 text-sm" max={data.currencies?.aqua_regia} min="0" />
 						</div>
 					</div>
 				</div>
@@ -139,7 +141,7 @@
 							Potion Mix
 						</h2>
 						<Input type="number" value="0" class="h-8 text-sm" readonly />
-						<span class="text-neutral-400 text-xs font-medium"> Owned: 4 </span>
+						<span class="text-neutral-400 text-xs font-medium"> Owned: {data.currencies?.potion_mix} </span>
 					</div>
 				</div>
 			</div>

@@ -99,7 +99,7 @@ const db = drizzle(DATABASE_URL); //Database Connection
 //User Functions
 export const getUserByEmail = async (email: string): Promise<DBResponse> => {
     const users = await db.select().from(userTable).where(eq(userTable.email, email));
-    const records = users.map(user => ({ id: user.id + "", fields: user }));
+    const records = users.map(user => ({ id: user.id + "", fields: user })) as airtableReplication[];
     return {
         ok: true,
         status: 200,

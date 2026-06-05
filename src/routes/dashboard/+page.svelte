@@ -26,12 +26,7 @@
 			status: string
 		}
 	}
-	interface UserCurrency {
-		redstone: number
-		glowstone: number
-		aqua_regia: number
-		potion_mix: number
-	}
+	import type { UserCurrency } from "$lib/types"
 	import { formatHours, getHackatimeProjects } from "$lib/utils"
 	import {
 		ArrowRightLeft,
