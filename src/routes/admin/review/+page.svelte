@@ -5,6 +5,7 @@
 	import ProjectDetailsDialog from "$lib/components/projectdetails-dialog.svelte"
 	import { invalidateAll } from "$app/navigation"
 	import type { Project, AirtableProject, Log } from "$lib/types"
+	import { countCharacters } from "$lib/utils"
 	import { updated } from "$app/state"
 	let { data } = $props()
 	console.log(data)
@@ -14,7 +15,7 @@
 	let userExternal = $state("")
 	let internalNote = $state("")
 	let overrideHours = $state(0)
-	let justification = $state("")
+	let userExternalCount = $derived(countCharacters(userExternal))
 	let project = $state({} as Project)
 	function calculateRecordedTime(log: Log[]): number {
 		let totalTime = 0
@@ -60,7 +61,7 @@
 	})
 	const openProject = (projectId: string) => {
 		invalidateAll()
-		const nextProject: AirtableProject = projects.find(
+		const nextProject: AirtableProject| undefined = projects.find(
 			(item: AirtableProject) => item.id === projectId
 		)
 		if (nextProject) {
@@ -106,6 +107,11 @@
 		justification: string
 	) => {
 		rejectLoader = true
+		if (userExternalCount < 20) {
+			alert("Please provide sufficient user feedback before rejecting.")
+			rejectLoader = false
+			return
+		}
 		const response = await fetch("/admin/review/reject", {
 			method: "POST",
 			headers: {
@@ -165,6 +171,11 @@
 			projectName: project.name,
 			projectLink: project.code,
 		})
+		if (userExternalCount < 20) {
+			alert("Please provide sufficient user feedback before approving.")
+			acceptLoader = false
+			return
+		}
 		const response = await fetch("/admin/review/accept", {
 			method: "POST",
 			headers: {
@@ -209,6 +220,7 @@
 		})
 	}
 	// let project = null
+	
 </script>
 
 <main class="w-screen h-screen">
@@ -330,6 +342,11 @@
 									class="flex flex-col items-start justify-start gap-y-1 w-full"
 								>
 									<h2 class="text-muted-foreground">Decision:</h2>
+									<div class="w-full h-5 {userExternalCount>20 ? 'bg-green-800' : 'bg-amber-800'} gap-4 rounded-full flex items-center px-4 text-xs font-sans">
+										<i class="fa-solid fa-info">
+										</i>
+										{userExternalCount>20? "Feedback is sufficient for a decision.": `Feedback must be at least 20 characters. (${userExternalCount}/20)`}
+									</div>
 									<Textarea
 										class="resize-none h-12"
 										placeholder="User Feedback"
