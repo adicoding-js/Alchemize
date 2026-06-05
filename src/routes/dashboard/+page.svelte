@@ -70,9 +70,11 @@
 			class="flex justify-between items-center bg-background/40 backdrop-blur px-6 py-4 border border-white/10 rounded-2xl"
 		>
 			<div class="flex items-center gap-4">
-				<div
-					class="bg-primary/40 border-2 border-primary rounded-full w-12 h-12"
-				></div>
+				<img
+					alt="Profile Picture"
+					src={data.pfp}
+					class="bg-primary/40 border rounded-full w-12 h-12"
+				/>
 				<div>
 					<p class="font-alchemize text-foreground text-lg">Hi {data.name}</p>
 					<p class="text-muted-foreground text-xs">{data.email}</p>

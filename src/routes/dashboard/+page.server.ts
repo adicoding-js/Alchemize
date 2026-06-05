@@ -1,6 +1,14 @@
 import type { PageServerLoad } from './$types';
-import {  START_DATE } from '$env/static/private';
+import { START_DATE, SLACK_BOT_TOKEN } from '$env/static/private';
 import { getProjectsByOwner, getUserByEmail } from '$lib/db';
+import { WebClient } from "@slack/web-api"
+let slackClient: WebClient = new WebClient(SLACK_BOT_TOKEN);
+const getSlackProfile = async (slackId: string) => {
+    const result = await slackClient.users.info({ user: slackId });
+
+    return result.user?.profile || null;
+}
+
 export const load: PageServerLoad = async ({ cookies }) => {
     const at = cookies.get('access_token_new');
     const hackatimeVerified = cookies.get('hackatime_verified');
@@ -10,7 +18,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
         },
         method: "GET"
     })
-    
+
     const data = await fetchRes.json()
     if (!fetchRes.ok) {
         return {
@@ -43,17 +51,20 @@ export const load: PageServerLoad = async ({ cookies }) => {
     const projectsData = await projectsResponse.json();
     const userData = await userResponse.json();
     let admin = false
-    if(cookies.get("admin_access_token")){
+    if (cookies.get("admin_access_token")) {
         admin = true
     }
+    let slackprofile = await getSlackProfile(data.identity.slack_id)
+
     return {
         projects: projectsData.records,
         hacks: hacks,
         email: data.identity.primary_email,
         eligiblity: data.identity.ysws_eligible,
-        name: data.identity.first_name,
+        name: slackprofile?.display_name || data.identity.name,
         hackatimeVerified: hackatimeVerified === "true",
         user: userData.records?.[0]?.fields ?? {},
-        admin: admin
+        admin: admin,
+        pfp: slackprofile?.image_512 || ""
     }
 };
