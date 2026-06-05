@@ -281,30 +281,39 @@
 				<div
 					class="feature-card bg-zinc-900/40 border border-rose-950/30 p-6 rounded-xl"
 				>
-					<h3 class="font-alchemize text-rose-300 text-xl">Sci-Fi</h3>
+					<h3 class="font-alchemize text-rose-300 text-xl">Endless</h3>
 					<p class="text-zinc-400 text-sm leading-relaxed">
-						Create a project based on Sci-Fi, it can be anything, a website, an
-						app, a game, a robot, anything. As long as it's based on Sci-Fi, it
-						counts.
+						Create a project with an infinite Canvas. It can be a game where
+						levels generate endlessly(like pacman), It can be a paint app with
+						infinite canvas, It can also be a scientific simulation which keeps
+						on running indefinitely. It can be anything as long as it has an
+						element of infinity to it(and it never ends).
 					</p>
 				</div>
 				<div
 					class="feature-card bg-zinc-900/40 border border-rose-950/30 p-6 rounded-xl"
 				>
-					<h3 class="font-alchemize text-rose-300 text-xl">Anime</h3>
+					<h3 class="font-alchemize text-rose-300 text-xl">No Internet</h3>
 					<p class="text-zinc-400 text-sm leading-relaxed">
-						Make something related to your favourite Anime character, it can be
-						a website, an app, a game, a robot, anything. As long as it's based
-						on Anime, it counts.
+						Make something that works without an internet connection, No APIs,
+						No CDNs, No fetching data from the internet, (and obviously no
+						websites), it can be a game that doesn't require an internet
+						connection, an app that uses Bluetooth to chat with friends, a robot
+						that does something cool, anything as long as it works without
+						internet.
 					</p>
 				</div>
 				<div
 					class="feature-card bg-zinc-900/40 border border-rose-950/30 p-6 rounded-xl"
 				>
-					<h3 class="font-alchemize text-rose-300 text-xl">Tribute</h3>
+					<h3 class="font-alchemize text-rose-300 text-xl">Indie Gamedev</h3>
 					<p class="text-zinc-400 text-sm leading-relaxed">
-						Make a project that pays tribute to something, it can be a person, a
-						group, an event, anything. As long as it's a tribute, it counts.
+						Make a game inspired by the indie game genre. It can be a platformer
+						with a unique art style, a narrative-driven experience, a puzzle
+						game with innovative mechanics, or anything else that captures the
+						spirit of indie games. Create your own artstyles here that gives vibes of indie
+						pixel art, hand drawn aesthetics,   The game should reflect the
+						creativity and innovation that indie games are known for.
 					</p>
 				</div>
 			</div>
