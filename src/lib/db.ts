@@ -393,3 +393,31 @@ export const getAdminByEmail = async (email: string): Promise<DBResponse> => {
         text: async () => JSON.stringify({ records }),
     } as DBResponse;
 }
+export const upsertAdmin = async (slackId: string, email: string, roles: string, name: string, nda: string): Promise<DBResponse> => {
+    try {
+        const adminRes = db.insert(adminTable).values({ slackId, email, roles, name, nda }).onConflictDoUpdate({
+            target: adminTable.email,
+            set:{
+                slackId,
+                roles,
+                name,
+                nda
+            }
+        }).returning();
+        const admin = await adminRes;
+        return {
+            ok: true,
+            status: 200,
+            json: async () => ({ id: admin[0].id + "", fields: admin[0] } as airtableReplication),
+            text: async () => JSON.stringify({ id: admin[0].id + "", fields: admin[0] } as airtableReplication),
+        } as DBResponse;
+    } catch (error) {
+        console.error("Database upsert failed:", error);
+        return {
+            ok: false,
+            status: 500,
+            json: async () => ({ message: "Database upsert failed" }),
+            text: async () => JSON.stringify({ message: "Database upsert failed" }),
+        };
+    }
+}

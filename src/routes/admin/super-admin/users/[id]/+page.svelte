@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from "$lib/components/ui/button/button.svelte"
 	import Switch from "$lib/components/ui/switch/switch.svelte"
+	import Input from "$lib/components/ui/input/input.svelte"
 	import { ArrowLeft } from "lucide-svelte"
 	let { data } = $props()
 	console.log(data)
@@ -8,6 +9,7 @@
 	let isT2Reviewer = $state(data.isT2Reviewer)
 	let isFulfiller = $state(data.isFulfiller)
 	let isSuperAdmin = $state(data.isSuperAdmin)
+	let slackId = $state(data.slackId)
 	const handleSaveChanges = () => {
 		console.log({
 			isReviewer,
@@ -42,6 +44,16 @@
 		</div>
 
 		<div class="space-y-2 px-4 py-2">
+					<div
+				class="flex flex-col  justify-between rounded-2xl px-4 py-3 transition hover:bg-white/5"
+			>
+				<div>
+					<p class="font-medium">Slack ID</p>
+					<p class="text-sm text-zinc-400">User's Slack ID (Use /se info)</p>
+				</div>
+
+				<Input bind:value={slackId} class="mt-4 w-60" />
+			</div>
 			<div
 				class="flex items-center justify-between rounded-2xl px-4 py-3 transition hover:bg-white/5"
 			>
