@@ -2,6 +2,20 @@
 	import Button from "$lib/components/ui/button/button.svelte"
 	import Switch from "$lib/components/ui/switch/switch.svelte"
 	import { ArrowLeft } from "lucide-svelte"
+	let { data } = $props()
+	console.log(data)
+	let isReviewer = $state(data.isReviewer)
+	let isT2Reviewer = $state(data.isT2Reviewer)
+	let isFulfiller = $state(data.isFulfiller)
+	let isSuperAdmin = $state(data.isSuperAdmin)
+	const handleSaveChanges = () => {
+		console.log({
+			isReviewer,
+			isT2Reviewer,
+			isFulfiller,
+			isSuperAdmin,
+		})
+	}
 </script>
 
 <main class="h-full w-full px-6 py-8 text-white">
@@ -15,7 +29,7 @@
 
 		<div>
 			<p class="text-sm text-zinc-400">Manage User</p>
-			<h1 class="text-3xl font-bold tracking-tight">coolcream</h1>
+			<h1 class="text-3xl font-bold tracking-tight">{data.slackName}</h1>
 		</div>
 	</div>
 
@@ -36,7 +50,7 @@
 					<p class="text-sm text-zinc-400">Can review tier 1 submissions</p>
 				</div>
 
-				<Switch checked />
+				<Switch bind:checked={ isReviewer } />
 			</div>
 
 			<div
@@ -47,7 +61,7 @@
 					<p class="text-sm text-zinc-400">Can review tier 2 submittions</p>
 				</div>
 
-				<Switch />
+				<Switch bind:checked={ isT2Reviewer } />
 			</div>
 
 			<div
@@ -58,7 +72,7 @@
 					<p class="text-sm text-zinc-400">Handles fulfillement</p>
 				</div>
 
-				<Switch />
+				<Switch bind:checked={ isFulfiller } />
 			</div>
 
 			<div
@@ -69,13 +83,14 @@
 					<p class="text-sm text-zinc-400">Full access</p>
 				</div>
 
-				<Switch checked />
+				<Switch bind:checked={ isSuperAdmin } />
 			</div>
 		</div>
 
 		<div class="flex justify-end px-6 py-4">
 			<Button
 				class="rounded-xl bg-admin-primary px-6 py-5 text-sm font-semibold text-white transition hover:opacity-90 hover:scale-104"
+				onclick={() => handleSaveChanges()}
 			>
 				Save Changes
 			</Button>

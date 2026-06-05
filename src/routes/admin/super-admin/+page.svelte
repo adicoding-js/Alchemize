@@ -33,7 +33,7 @@
 					class="w-full py-1 bg-background/40 rounded-xl border-2 p-2 flex items-center justify-between"
 				>
 					<p class="font-alchemize">{user.fields.email}</p>
-					<a href={`/admin/super-admin/users/${user.id}`}>
+					<a href={`/admin/super-admin/users/${user.fields.email}`}>
 						<Button
 							class="bg-admin-primary border border-muted hover:scale-104"
 						>

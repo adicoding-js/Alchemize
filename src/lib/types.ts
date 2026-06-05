@@ -102,6 +102,7 @@ export interface AdminJWT {
 	name: string
 	roles: string,
 	isReviewer: boolean,
+	isT2Reviewer: boolean,
 	isSuperAdmin: boolean,
 	isFulfiller: boolean,
 }

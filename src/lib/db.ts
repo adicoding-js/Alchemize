@@ -382,3 +382,14 @@ export const addToJustifications = async (justificationData: {
         text: async () => JSON.stringify({ id: newJustification[0].id + "", fields: newJustification[0] } as airtableReplication),
     } as DBResponse;
 }
+export const getAdminByEmail = async (email: string): Promise<DBResponse> => {
+    const admins = await db.select().from(adminTable).where(eq(adminTable.email, email.trim()));
+
+    const records = admins.map(admin => ({ id: admin.id + "", fields: admin }));
+    return {
+        ok: true,
+        status: 200,
+        json: async () => ({ records }),
+        text: async () => JSON.stringify({ records }),
+    } as DBResponse;
+}
