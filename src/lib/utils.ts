@@ -41,7 +41,8 @@ export const getDataFromAccessToken = async (accessToken: string): Promise<Data>
 }
 export function formatHours(totalSeconds: number | undefined): string {
     const hours = (totalSeconds ?? 0) / 3600
-    return `${hours.toFixed(1)}hr`
+    const mins = (totalSeconds ?? 0) % 3600
+    return `${Math.floor(hours)}hr ${Math.floor(mins / 60)}min`
 }
 export function getHackatimeProjects(payload: unknown): HackatimeProject[] {
     if (!payload || typeof payload !== "object") return []
