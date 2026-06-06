@@ -119,3 +119,13 @@ export interface User {
 	email: string
 	currency: string
 }
+export interface UserAuthToken{
+	id: string
+	dbid: string
+	email: string
+	verification_status: string
+	first_name: string
+	last_name: string
+	slack_id: string
+	ysws_eligible: boolean
+}

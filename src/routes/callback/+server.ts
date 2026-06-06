@@ -1,7 +1,9 @@
 import { env } from "$env/dynamic/private"
 import { error, redirect } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
+import type {UserAuthToken} from "$lib/types"
 import { jwtDecode } from "jwt-decode"
+import jwt from "jsonwebtoken"
 import { createNewUser, getUserByEmail, createReferRecord } from "$lib/db"
 const XORdecrypt = (textInp: string) => {
 	const tb = Buffer.from(textInp, 'base64');
@@ -24,7 +26,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const clientId = env.HACKCLUB_AUTH
 	const clientSecret = env.HACKCLUB_SECRET
 	const redirectUri = env.HACKCLUB_REDIRECT
-	let newUser = true
+	let newUser = false
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, "Missing OAuth environment variables")
 	}
@@ -53,6 +55,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		)
 	}
 	const airtableUserRecordId = cookies.get("airtable_user_record_id")
+	let userRecordIdGlobal: string = ""
 	if (!airtableUserRecordId) {
 		//Check Database for user with email fro tokenBody.id_token, if not found, create new user and set cookie with new record id, if found, set cookie with existing record id
 		const decodedToken: any = jwtDecode(tokenBody.id_token)
@@ -70,6 +73,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		}
 		let userRecordId: string
 		if (airtableData.records.length === 0) {
+			newUser = true
 			// Create new user
 			const createResponse = await createNewUser(email, decodedToken.sub)
 			const createData = await createResponse.json()
@@ -129,6 +133,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			path: "/",
 			maxAge: 60 * 60 * 24 * 30 * 6,
 		})
+		userRecordIdGlobal = userRecordId
 	}
 	const extraInfoData = await fetch("https://auth.hackclub.com/api/v1/me", {
 		headers: {
@@ -152,6 +157,28 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			maxAge: 60 * 60 * 24 * 30 * 6,
 		})
 	}
+	if (extraInfo){
+		const payload: UserAuthToken = {
+			id: extraInfo.identity.id,
+			dbid: userRecordIdGlobal,
+			email: extraInfo.identity.primary_email,
+			verification_status: extraInfo.identity.verification_status,
+			first_name: extraInfo.identity.first_name,
+			last_name: extraInfo.identity.last_name,
+			slack_id: extraInfo.identity.slack_id,
+			ysws_eligible: extraInfo.identity.ysws_eligible
+		}
+		const secret = env.USER_JWT_SECRET
+		const userToken = jwt.sign(payload, secret, { algorithm: "HS256", expiresIn: "120d" })
+		cookies.set("user_token", userToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: "lax",
+			path: "/",
+			maxAge: 60 * 60 * 24 * 30 * 4,
+		})
+	}
+	
 	cookies.set("access_token_new", tokenBody.access_token, {
 		httpOnly: true,
 		secure: true,
