@@ -3,6 +3,8 @@ import { jwtDecode } from 'jwt-decode';
 import { env } from '$env/dynamic/private';
 import { getDataFromAccessToken } from '$lib/utils';
 import { getProjectsByOwner, createProject, updateProject } from '$lib/db';
+import { USER_JWT_SECRET } from '$env/static/private';
+import jwt from 'jsonwebtoken';
 export const actions = {
     create: async (event) => {
 
@@ -153,10 +155,20 @@ export const actions = {
 } satisfies Actions;
 export const load: PageServerLoad = async ({ cookies }) => {
     const accessToken = cookies.get('access_token_new') ?? cookies.get('access_token');
+    const user_token = cookies.get('user_token');
+    let decoded = null;
+    try{
+        if(user_token){
+            decoded = jwt.verify(user_token, USER_JWT_SECRET);
+        }
+    } catch (error) {
+        console.error('Invalid user token:', error);
+    }
     if (!accessToken) {
         return { error: 'No access token found' };
     }
-    const email = (await getDataFromAccessToken(accessToken)).email;
+    const email = decoded ? (decoded as any).email : null;
+    
     let hackatimeAccessToken = cookies.get('hackatime_token');
     let hacks = ""
     if (hackatimeAccessToken) {
