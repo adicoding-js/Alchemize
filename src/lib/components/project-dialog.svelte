@@ -85,10 +85,20 @@
 	const shippedTime = $derived.by(() =>
 		log.reduce((total, entry) => total + entry.deltaTime, 0)
 	)
-
+	let shipLoading = $state(false)
+	const ship = () => {
+		shipLoading = true
+		onship(changelog)
+		changelog = ""
+		shipLoading = false
+	}
 	const hoursShipped = $derived(Math.floor((shippedTime * 10) / 60) / 10)
 	const selectClass =
 		"flex h-10 w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-zinc-100"
+			
+	let files:any = $state();
+
+	let hasFile = $derived(files && files.length > 0);
 </script>
 
 <Dialog.Root bind:open>
@@ -234,6 +244,13 @@
 									{/if}
 								{/each}
 							{/each}
+							<Button variant="outline" class="w-full" onclick={ship}>
+							{#if showRotator}
+								<div class="size-5 border-2 border-gray-500 border-t-white rounded-full animate-spin"></div>
+							
+							{/if}
+								<i class="fa-solid fa-plus"></i> Ship
+							</Button>
 						</div>
 					</div>
 				{/if}
@@ -283,12 +300,12 @@
 							{#if mode === "create"}
 								<span
 									class="text-[11px] font-medium px-2 py-0.5 rounded-full {descriptionCharCount <
-									20
+									50
 										? 'bg-amber-500/10 text-amber-400'
 										: 'bg-emerald-500/10 text-emerald-400'}"
 								>
-									{descriptionCharCount < 20
-										? `${20 - descriptionCharCount} more chars needed`
+									{descriptionCharCount < 50
+										? `${50 - descriptionCharCount} more chars needed`
 										: "Length OK"}
 								</span>
 							{/if}
@@ -353,7 +370,7 @@
 										class="flex flex-col items-center justify-center pt-3 pb-3"
 									>
 										<p class="text-xs text-zinc-400 font-medium">
-											Click to upload workspace preview image
+											{hasFile ? "Screenshot ready to upload" : "Click to upload a screenshot"}
 										</p>
 										<p class="text-[10px] text-zinc-600 mt-1">
 											PNG, JPG, GIF up to 5MB
@@ -366,6 +383,7 @@
 										accept="image/*"
 										required
 										class="hidden"
+										bind:files={files}
 									/>
 								</label>
 							</div>
@@ -511,9 +529,9 @@
 								type="submit"
 								class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider px-6 h-10 shadow-lg shadow-red-950/20"
 								onclick={() => {
-									if (mode === "create" && descriptionCharCount < 20) {
+									if (mode === "create" && descriptionCharCount < 50) {
 										alert(
-											"Please provide a description with at least 20 characters."
+											"Please provide a description with at least 50 characters."
 										)
 										return
 									}
@@ -524,7 +542,7 @@
 										class="w-3.5 h-3.5 border-2 border-zinc-400 border-t-white rounded-full animate-spin mr-2"
 									></div>
 								{/if}
-								{mode === "create" ? "Initialize Project" : "Ship Update"}
+								{mode === "create" ? "Initialize Project" : "Update Project"}
 							</Button>
 						</Dialog.Close>
 					</div>
