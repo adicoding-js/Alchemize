@@ -212,7 +212,7 @@
 				<div
 					class="flex items-center justify-between text-xs font-semibold tracking-wider text-rose-300/80"
 				>
-					<span>REGISTRATION GOAL</span>
+					<span>Start Goal</span>
 					<span
 						class="text-rose-400 font-mono bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20"
 						>{rsvpCount} RSVPs</span
