@@ -24,6 +24,7 @@
 		}
 		return totalTime
 	}
+
 	let autogenChangelog = $state("")
 	const generateChangelog = (project: Project) => {
 		const hackatimeLine = `User tracked ${project.hours} hours on Hackatime project: ${project.hackatime}.\n`

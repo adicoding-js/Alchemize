@@ -8,7 +8,8 @@
 	import { Button } from "$lib/components/ui/button"
 	import type { AirtableProject } from "$lib/types"
 	import { countCharacters } from "$lib/utils"
-
+	import {toast} from "svelte-sonner"
+	
 	type Log = {
 		status: 0 | 1 | 2
 		timestamp: string
@@ -87,6 +88,11 @@
 	)
 	let shipLoading = $state(false)
 	const ship = () => {
+		if(changelog.trim().length < 20) {
+			toast.error("Please provide a changelog before shipping.")
+			return
+		}
+		 
 		shipLoading = true
 		onship(changelog)
 		changelog = ""
@@ -530,7 +536,7 @@
 								class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider px-6 h-10 shadow-lg shadow-red-950/20"
 								onclick={() => {
 									if (mode === "create" && descriptionCharCount < 50) {
-										alert(
+										toast.error(
 											"Please provide a description with at least 50 characters."
 										)
 										return

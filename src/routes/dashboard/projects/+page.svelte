@@ -8,7 +8,7 @@
 	import { loaderStore } from "$lib/stores/loader"
 
 	import { formatHours, getHackatimeProjects } from "$lib/utils"
-
+	import {toast} from "svelte-sonner"
 	import type { AirtableProject } from "$lib/types"
 
 	let { data } = $props()
@@ -111,7 +111,7 @@
 
 	async function shipProject(changelog: string) {
 		if (changelog.trim().length < 20) {
-			alert("Please provide a changelog before shipping.")
+			toast.error("Please provide a changelog before shipping.")
 			return
 		}
 
@@ -133,7 +133,7 @@
 				credentials: "include",
 			})
 
-			alert(
+			toast(
 				response.ok
 					? "Project shipped successfully!"
 					: `Error shipping project. Code: ${response.status} — contact @TheUtkarsh8939 on Slack`

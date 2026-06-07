@@ -2,6 +2,7 @@
 	import Button from "$lib/components/ui/button/button.svelte"
 	import ShopDialog from "$lib/components/shopitem-dialog.svelte"
 	import looseJson from "loose-json"
+	
 	let { data } = $props()
 	let currencies = $state(
 		looseJson(data.userRecord?.fields?.currency ?? "{}") as UserCurrency
