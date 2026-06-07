@@ -1,9 +1,11 @@
 import type { RequestHandler } from "@sveltejs/kit"
-import { BOT_AUTH } from '$env/static/private';
+import { BOT_AUTH, USER_JWT_SECRET } from '$env/static/private';
 import itemsJson from "./../items.json"
 import looseJson from 'loose-json'
 import type { Item, UserCurrency } from "$lib/types"
 import { createOrder, getUserByEmail, patchUserCurrency } from "$lib/db";
+import jwt from 'jsonwebtoken';
+import type {UserAuthToken} from "$lib/types";
 interface RequestBody {
     itemId: string;
     quantity: number;
@@ -31,6 +33,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     }
     const items: Item[] = itemsJson as Item[];
     const item = items.find(i => i.itemID === body.itemId);
+    const userToken = cookies.get('user_token');
     if (!item) {
         return new Response("Item not found", { status: 404 })
     }
@@ -38,18 +41,17 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     if (!at) {
         return new Response("Unauthorized", { status: 401 })
     }
-    const fetchRes = await fetch("https://auth.hackclub.com/api/v1/me", {
-        headers: {
-            Authorization: `Bearer ${at}`,
-        },
-        method: "GET"
-    })
-    if (!fetchRes.ok) {
-        return new Response("Failed to fetch user data", { status: 500 })
+    let data: UserAuthToken | null = null;
+    if (userToken) {
+        try {
+            data = jwt.verify(userToken, USER_JWT_SECRET) as UserAuthToken;
+        }
+        catch (err) {
+            console.error("Error verifying JWT:", err);
+        }
     }
-    const data = await fetchRes.json()
-    const uid = data?.identity?.id;
-    const email = data?.identity?.primary_email;
+    const uid = data?.id;
+    const email = data?.email;
     if (!uid || !email) {
         return new Response("Unauthorized", { status: 401 })
     }
@@ -98,7 +100,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             "Authorization": `Bearer ${BOT_AUTH}`
         },
         body: JSON.stringify(
-            { "user_id": data.identity?.slack_id, "order_id": "< _Some random ID_ >", "item_name": item.name, "qty": `${body.quantity}`, "cost": `${totalPrice} ${currencyUsed.charAt(0).toUpperCase() + currencyUsed.slice(1)}` }
+            { "user_id": data?.slack_id, "order_id": "< _Some random ID_ >", "item_name": item.name, "qty": `${body.quantity}`, "cost": `${totalPrice} ${currencyUsed.charAt(0).toUpperCase() + currencyUsed.slice(1)}` }
         )
     })
     if (!botResponse.ok) {
@@ -106,7 +108,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             status: botResponse.status,
             statusText: botResponse.statusText,
             timestamp: new Date().toISOString(),
-            slackId: data.identity?.slack_id,
+            slackId: data?.slack_id,
             itemName: item.name
         })
         return new Response("Project shipped but failed to send notification", { status: 207 })

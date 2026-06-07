@@ -4,15 +4,40 @@ import { env } from '$env/dynamic/private';
 import { getDataFromAccessToken } from '$lib/utils';
 import { getProjectsByOwner, createProject, updateProject } from '$lib/db';
 import { USER_JWT_SECRET } from '$env/static/private';
+import type {UserAuthToken} from "$lib/types";
 import jwt from 'jsonwebtoken';
 export const actions = {
     create: async (event) => {
 
         const accessToken = event.cookies.get('access_token_new');
-        if (!accessToken) {
-            return { error: 'No access token found' };
+        const user_token = event.cookies.get('user_token');
+        let data = {}   as UserAuthToken;
+        try {
+            if (user_token) {
+                data = jwt.verify(user_token, USER_JWT_SECRET) as UserAuthToken;
+            }
+            else{
+                return {
+                    success: false,
+                    error: {
+                        title: 'Unauthorized',
+                        code: 'NO_USER_TOKEN',
+                        message: 'No user token found. Please login again and try submitting the project.'
+                    }
+                }
+            }
+        }catch (error) {
+            console.error('Invalid user token:', error);
+            return {
+                success: false,
+                error: {
+                    title: 'Unauthorized',
+                    code: 'INVALID_USER_TOKEN',
+                    message: 'Invalid user token. Please login again and try submitting the project.'
+                }
+            }
         }
-        const data = await getDataFromAccessToken(accessToken)
+
         const email = data.email;
         const slackId = data.slack_id;
         const formData = await event.request.formData();
@@ -99,10 +124,34 @@ export const actions = {
     update: async (event) => {
 
         const accessToken = event.cookies.get('access_token_new');
-        if (!accessToken) {
-            return { error: 'No access token found' };
+                const user_token = event.cookies.get('user_token');
+        let data = {}   as UserAuthToken;
+        try {
+            if (user_token) {
+                data = jwt.verify(user_token, USER_JWT_SECRET) as UserAuthToken;
+            }
+            else{
+                return {
+                    success: false,
+                    error: {
+                        title: 'Unauthorized',
+                        code: 'NO_USER_TOKEN',
+                        message: 'No user token found. Please login again and try submitting the project.'
+                    }
+                }
+            }
+        }catch (error) {
+            console.error('Invalid user token:', error);
+            return {
+                success: false,
+                error: {
+                    title: 'Unauthorized',
+                    code: 'INVALID_USER_TOKEN',
+                    message: 'Invalid user token. Please login again and try submitting the project.'
+                }
+            }
         }
-        const email = (await getDataFromAccessToken(accessToken)).email;
+        const email = data.email;
         const formData = await event.request.formData();
         const projectName = formData.get('name') as string;
         const projectDescription = formData.get('description') as string;
