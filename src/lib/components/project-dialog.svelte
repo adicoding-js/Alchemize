@@ -427,7 +427,7 @@
 								<Label
 									for="theme"
 									class="text-xs font-semibold uppercase tracking-wider text-zinc-400"
-									>Projrct Theme</Label
+									>Project Theme</Label
 								>
 								<select
 									id="theme"
