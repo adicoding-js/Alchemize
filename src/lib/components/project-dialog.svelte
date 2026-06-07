@@ -250,7 +250,11 @@
 									{/if}
 								{/each}
 							{/each}
-							<Button variant="outline" class="w-full" onclick={ship}>
+							<Button
+								variant="default"
+								class="w-full hover:bg-primary/70 hover:-translate-y-px"
+								onclick={ship}
+							>
 								{#if showRotator}
 									<div
 										class="size-5 border-2 border-gray-500 border-t-white rounded-full animate-spin"
@@ -531,7 +535,7 @@
 						<Dialog.Close>
 							<Button
 								type="submit"
-								class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider px-6 h-10 shadow-lg shadow-red-950/20"
+								class="bg-primary hover:bg-primary/80 text-white text-xs font-bold uppercase tracking-wider px-6 h-10 shadow-lg shadow-red-950/20"
 								onclick={() => {
 									//Check for all the fields
 									if (
