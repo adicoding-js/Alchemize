@@ -35,10 +35,10 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             slackName: await getUserName(adminData.records[0].fields.slackId),
             slackId: adminData.records[0].fields.slackId,
             email: adminData.records[0].fields.email,
-            isReviewer: roles.includes("reviewer"),
-            isSuperAdmin: roles.includes("super_admin"),
-            isFulfiller: roles.includes("fulfiller"),
-            isT2Reviewer: roles.includes("t2_reviewer"),
+            isReviewer: roles.includes("reviewer") || false,
+            isSuperAdmin: roles.includes("super_admin") || false,
+            isFulfiller: roles.includes("fulfiller") || false,
+            isT2Reviewer: roles.includes("t2_reviewer") || false,
             nda: adminData.records[0].fields.nda === "true"
         }
 }

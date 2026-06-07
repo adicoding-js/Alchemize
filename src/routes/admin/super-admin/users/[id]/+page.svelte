@@ -5,12 +5,12 @@
 	import { ArrowLeft } from "lucide-svelte"
 	let { data } = $props()
 	console.log(data)
-	let isReviewer = $state(data.isReviewer)
-	let isT2Reviewer = $state(data.isT2Reviewer)
-	let isFulfiller = $state(data.isFulfiller)
-	let isSuperAdmin = $state(data.isSuperAdmin)
-	let slackId = $state(data.slackId)
-	let nda = $state(data.nda)
+	let isReviewer = $state(data.isReviewer ?? false)
+	let isT2Reviewer = $state(data.isT2Reviewer ?? false)
+	let isFulfiller = $state(data.isFulfiller ?? false)
+	let isSuperAdmin = $state(data.isSuperAdmin ?? false)
+	let slackId = $state(data.slackId ?? "")
+	let nda = $state(data.nda ?? false)
 	let loading = $state(false)
 	const handleSaveChanges = () => {
 		loading = true
@@ -86,7 +86,7 @@
 					<p class="text-sm text-zinc-400">Can review tier 1 submissions</p>
 				</div>
 
-				<Switch bind:checked={ isReviewer } />
+				<Switch bind:checked={ isReviewer} />
 			</div>
 
 			<div

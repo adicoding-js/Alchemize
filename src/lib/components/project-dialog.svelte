@@ -397,6 +397,21 @@
 										required
 										class="hidden"
 										bind:files
+										onchange={event => {
+											//@ts-ignore
+											const file = event?.target?.files[0]
+
+											if (file) {
+												
+												const objectUrl = URL.createObjectURL(file)
+
+												
+												fileinputPreview = objectUrl
+												
+
+												
+											}
+										}}
 									/>
 								</label>
 							</div>
@@ -550,7 +565,6 @@
 										toast.error("Please fill in all required fields.")
 										return
 									}
-
 
 									if (mode === "create" && descriptionCharCount < 50) {
 										toast.error(
