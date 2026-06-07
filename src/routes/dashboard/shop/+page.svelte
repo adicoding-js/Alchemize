@@ -2,7 +2,7 @@
 	import Button from "$lib/components/ui/button/button.svelte"
 	import ShopDialog from "$lib/components/shopitem-dialog.svelte"
 	import looseJson from "loose-json"
-	
+	import {toast} from "svelte-sonner"
 	let { data } = $props()
 	let currencies = $state(
 		looseJson(data.userRecord?.fields?.currency ?? "{}") as UserCurrency
@@ -77,9 +77,9 @@
 			}),
 		}).then(res => {
 			if (res.ok) {
-				alert("Purchase successful!")
+				toast.success("Purchase successful!")
 			} else {
-				alert("Purchase failed")
+				toast.error("Purchase failed")
 				console.error("Purchase failed", res)
 				const body = res.text().then(text => {
 					console.error("Response body:", text)

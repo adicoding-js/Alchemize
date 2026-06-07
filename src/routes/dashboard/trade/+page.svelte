@@ -5,6 +5,7 @@
 	import { currenciesToPotionMix } from "$lib/utils"
 	import { invalidateAll } from "$app/navigation"
 	let { data } = $props()
+	import {toast} from "svelte-sonner"
 	let redstoneAmount = $state(0)
 	let glowstoneAmount = $state(0)
 	let aquaRegiaAmount = $state(0)
@@ -22,6 +23,10 @@
 	}
 	let loading = $state(false)
 	const updatePotionMix = async () => {
+		if (potionMixAmount <= 0) {
+			toast.error("Please enter valid amounts to convert.")
+			return
+		}
 		loading = true
 		const res = await fetch("/dashboard/trade/trade", {
 			method: "POST",
@@ -55,10 +60,10 @@
 			aquaRegiaAmount = 0
 			potionMixAmount = 0
 
-			alert("Stones converted successfully!")
+			toast.success("Stones converted successfully!")
 		} else {
 			const errorData = await res.json()
-			alert(errorData.message)
+			toast.error(errorData.message)
 		}
 		loading = false
 	}

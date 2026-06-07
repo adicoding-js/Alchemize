@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import { START_DATE, SLACK_BOT_TOKEN } from '$env/static/private';
 import { getProjectsByOwner, getUserByEmail } from '$lib/db';
 import { WebClient } from "@slack/web-api"
+import { redirect } from '@sveltejs/kit';
 import jwt from "jsonwebtoken"
 let slackClient: WebClient = new WebClient(SLACK_BOT_TOKEN);
 const getSlackProfile = async (slackId: string) => {
@@ -22,7 +23,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
         } else {
             throw new Error("No user token found");
         }
-    }catch (error) {
+    } catch (error) {
         console.error("Error decoding user token:", error);
         throw new Error("Invalid user token");
     }
@@ -30,25 +31,32 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
     let hackatimeAccessToken = cookies.get('hackatime_token');
     let hacks = ""
-    if (hackatimeAccessToken) {
+    if (!hackatimeAccessToken) {
+        cookies.set('hackatime_verified', 'false', { path: '/' });
+        cookies.set('hackatime_token', '', { path: '/', expires: new Date(0) });
+        return redirect(303, "/")
+    }
 
-        let hackatimes = await fetch(`https://hackatime.hackclub.com/api/v1/authenticated/projects?include_archived=false&start=${START_DATE}`, {
+    let [hackatimes, projectsResponse, userResponse, slackprofile] = await Promise.all([
+        fetch(`https://hackatime.hackclub.com/api/v1/authenticated/projects?include_archived=false&start=${START_DATE}`, {
             headers: {
                 Authorization: `Bearer ${hackatimeAccessToken}`,
                 "Content-Type": 'application/json'
             }
-        })
-        hacks = await hackatimes.json()
+        }),
+        getProjectsByOwner(decodedToken.email),
+        getUserByEmail(decodedToken.email),
+        getSlackProfile(decodedToken.slack_id)
+    ])
+    hacks = await hackatimes.json()
 
-    }
 
     if (!at) {
         return {
             projects: []
         }
     }
-    let projectsResponse = await getProjectsByOwner(decodedToken.email);
-    let userResponse = await getUserByEmail(decodedToken.email);
+
 
     const projectsData = await projectsResponse.json();
     const userData = await userResponse.json();
@@ -56,7 +64,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     if (cookies.get("admin_access_token")) {
         admin = true
     }
-    let slackprofile = await getSlackProfile(decodedToken.slack_id)
+
 
     return {
         projects: projectsData.records,

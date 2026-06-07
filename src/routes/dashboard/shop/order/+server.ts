@@ -73,13 +73,9 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         return new Response("Insufficient currency: " + hasThatCurrency + " < " + totalPrice, { status: 400 })
     }
     const updatedCurrency = purchaseItem(item, body.quantity, currentCurrency);
-    const updatedUserResponse = await patchUserCurrency(email, updatedCurrency);
-
-    if (!updatedUserResponse.ok) {
-        console.log("Failed to update user currency:", await updatedUserResponse.text());
-        return new Response("Failed to update user currency", { status: 500 })
-    }
-    const purchaseRecord = await createOrder({
+    const [updatedUserResponse, purchaseRecord] = await Promise.all([
+        patchUserCurrency(email, updatedCurrency),
+        createOrder({
                 orderItem: item.name,
                 itemID: item.itemID,
                 qty: body.quantity,
@@ -89,6 +85,14 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
                 fulfiller: "",
                 moreData: ""
             })
+
+    ])
+
+    if (!updatedUserResponse.ok) {
+        console.log("Failed to update user currency:", await updatedUserResponse.text());
+        return new Response("Failed to update user currency", { status: 500 })
+    }
+
     if (!purchaseRecord.ok) {
         console.log("Failed to create purchase record:", await purchaseRecord.text());
         return new Response("Failed to create purchase record", { status: 500 })

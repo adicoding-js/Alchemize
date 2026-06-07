@@ -44,17 +44,9 @@ export const POST: RequestHandler = async ({ request,cookies }) => {
     }
     const name = decoded.name
     const updatedLog = updateLog(JSON.parse(log), -decreaseTime, userExternal, name, internalNote, justification)
-    const response = await patchProjectForShip(recordId, updatedLog, "rejected")
-    if (!response.ok) {
-        const errorData = await response.json()
-        console.error("Failed to update project log:", {
-            status: response.status,
-            error: errorData,
-            timestamp: new Date().toISOString()
-        })
-        return error(500, "Failed to update project log")
-    }
-     const botResponse = await fetch("https://aoishik.qzz.io/review-reject", {
+    const [response, botResponse] = await Promise.all([
+        patchProjectForShip(recordId, updatedLog, "rejected"),
+        fetch("https://aoishik.qzz.io/review-reject", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -64,6 +56,17 @@ export const POST: RequestHandler = async ({ request,cookies }) => {
             { "user_id": slackId, "project_name": projectName, "project_link": projectLink, "reviewer_id": decoded.slackId, "feedback": userExternal }
             )
         })
+    ])
+    if (!response.ok) {
+        const errorData = await response.json()
+        console.error("Failed to update project log:", {
+            status: response.status,
+            error: errorData,
+            timestamp: new Date().toISOString()
+        })
+        return error(500, "Failed to update project log")
+    }
+     
         if (!botResponse.ok) {
             console.warn(`Failed to send notification to bot for record ${recordId}:`, {
                 status: botResponse.status,
