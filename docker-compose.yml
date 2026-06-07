@@ -2,5 +2,21 @@ services:
   app:
     build: .
     env_file: .env.production
+
     environment:
       - NODE_ENV=production
+      - PORT=3000
+
+    expose:
+      - "3000"
+
+    labels:
+      - traefik.enable=true
+
+      # Router
+      - traefik.http.routers.alchemize.rule=Host(`alchemize.hackclub.com`)
+      - traefik.http.routers.alchemize.entrypoints=websecure
+      - traefik.http.routers.alchemize.tls=true
+
+      # Service
+      - traefik.http.services.alchemize.loadbalancer.server.port=3000
