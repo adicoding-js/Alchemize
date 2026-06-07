@@ -104,13 +104,13 @@
 </script>
 
 <main
-	class="min-h-screen w-full bg-gradbg text-foreground p-6 md:p-10 font-mono tracking-wide selection:bg-primary selection:text-primary-foreground relative overflow-x-hidden"
+	class="min-h-screen w-full bg-gradbg text-foreground p-6 md:p-10 font-mono tracking-wide selection:bg-primary selection:text-primary-foreground"
 >
 	<div class="fixed inset-0 bg-black/60 z-0 pointer-events-none"></div>
 
-	<div class="relative z-10 max-w-7xl mx-auto flex flex-col gap-8">
+	<div class="relative z-50 max-w-7xl mx-auto flex flex-col gap-8">
 		<div
-			class="flex flex-col lg:flex-row gap-4 items-center justify-between border-b-2 border-primary/40 pb-4 backdrop-blur-md px-4 py-2 -mx-4 rounded-t-sm pr-10"
+			class="flex items-center justify-between border-b-2 border-primary/30 pb-4"
 		>
 			<div class="flex items-center gap-3">
 				<ShoppingBag class="text-primary h-4 w-4 animate-pulse" />
@@ -126,22 +126,22 @@
 				class="flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-wider"
 			>
 				<div
-					class="border-2 border-primary bg-black text-primary font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-sm"
+					class="border-2 border-primary bg-black text-primary font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-xs"
 				>
 					<span>Redstone: {currencies.redstone.toString()}</span>
 				</div>
 				<div
-					class="border-2 border-primary bg-black text-yellow-500 font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-sm"
+					class="border-2 border-primary bg-black text-yellow-500 font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-xs"
 				>
 					<span>Glowstone: {currencies.glowstone.toString()}</span>
 				</div>
 				<div
-					class="border-2 border-primary bg-black text-blue-500 font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-sm"
+					class="border-2 border-primary bg-black text-blue-500 font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-xs"
 				>
 					<span>Aquaregia: {currencies.aqua_regia.toString()}</span>
 				</div>
 				<div
-					class="border-2 border-primary bg-black text-primary font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-sm"
+					class="border-2 border-primary bg-black text-primary font-bold tracking-wider uppercase rounded-none transition-all duration-100 shadow-[2px_2px_0px_0px_rgba(var(--primary),0.3)] px-2 py-1 text-xs"
 				>
 					<span>Potion mix: {currencies.potion_mix.toString()}</span>
 				</div>

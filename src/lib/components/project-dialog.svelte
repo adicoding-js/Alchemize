@@ -8,8 +8,8 @@
 	import { Button } from "$lib/components/ui/button"
 	import type { AirtableProject } from "$lib/types"
 	import { countCharacters } from "$lib/utils"
-	import {toast} from "svelte-sonner"
-	
+	import { toast } from "svelte-sonner"
+
 	type Log = {
 		status: 0 | 1 | 2
 		timestamp: string
@@ -88,11 +88,11 @@
 	)
 	let shipLoading = $state(false)
 	const ship = () => {
-		if(changelog.trim().length < 20) {
+		if (changelog.trim().length < 20) {
 			toast.error("Please provide a changelog before shipping.")
 			return
 		}
-		 
+
 		shipLoading = true
 		onship(changelog)
 		changelog = ""
@@ -101,10 +101,10 @@
 	const hoursShipped = $derived(Math.floor((shippedTime * 10) / 60) / 10)
 	const selectClass =
 		"flex h-10 w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-zinc-100"
-			
-	let files:any = $state();
 
-	let hasFile = $derived(files && files.length > 0);
+	let files: any = $state()
+
+	let hasFile = $derived(files && files.length > 0)
 </script>
 
 <Dialog.Root bind:open>
@@ -250,12 +250,17 @@
 									{/if}
 								{/each}
 							{/each}
-							<Button variant="outline" class="w-full" onclick={ship}>
-							{#if showRotator}
-								<div class="size-5 border-2 border-gray-500 border-t-white rounded-full animate-spin"></div>
-							
-							{/if}
-								<i class="fa-solid fa-plus"></i> Ship
+							<Button
+								variant="default"
+								class="w-full hover:bg-primary/70 hover:-translate-y-px"
+								onclick={ship}
+							>
+								{#if showRotator}
+									<div
+										class="size-5 border-2 border-gray-500 border-t-white rounded-full animate-spin"
+									></div>
+								{/if}
+								<i class="fa-solid fa-plus"></i> Add a ship
 							</Button>
 						</div>
 					</div>
@@ -376,7 +381,9 @@
 										class="flex flex-col items-center justify-center pt-3 pb-3"
 									>
 										<p class="text-xs text-zinc-400 font-medium">
-											{hasFile ? "Screenshot ready to upload" : "Click to upload a screenshot"}
+											{hasFile
+												? "Screenshot ready to upload"
+												: "Click to upload a screenshot"}
 										</p>
 										<p class="text-[10px] text-zinc-600 mt-1">
 											PNG, JPG, GIF up to 5MB
@@ -389,7 +396,7 @@
 										accept="image/*"
 										required
 										class="hidden"
-										bind:files={files}
+										bind:files
 									/>
 								</label>
 							</div>
@@ -454,9 +461,7 @@
 								class={selectClass}
 								bind:value={hackatime}
 							>
-								<option value="" disabled selected={!hackatime}
-									>Chooose</option
-								>
+								<option value="" disabled selected={!hackatime}>Chooose</option>
 								{#if mode === "update" && project?.fields.hackatime}
 									<option value={project.fields.hackatime}>
 										{project.fields.hackatime} (Currently connected)
@@ -533,7 +538,7 @@
 						<Dialog.Close>
 							<Button
 								type="submit"
-								class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider px-6 h-10 shadow-lg shadow-red-950/20"
+								class="bg-primary hover:bg-primary/80 text-white text-xs font-bold uppercase tracking-wider px-6 h-10 shadow-lg shadow-red-950/20"
 								onclick={() => {
 									if (mode === "create" && descriptionCharCount < 50) {
 										toast.error(
