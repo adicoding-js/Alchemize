@@ -130,7 +130,7 @@
 						<p
 							class="text-[10px] font-bold uppercase tracking-[0.2em] text-red-500 mb-1"
 						>
-							Project Workspace
+							Alchemize Projects
 						</p>
 						<h1
 							class="text-2xl sm:text-3xl font-black tracking-tight text-zinc-100"
@@ -401,7 +401,7 @@
 							<Label
 								for="type"
 								class="text-xs font-semibold uppercase tracking-wider text-zinc-400"
-								>Build Medium</Label
+								>Project Type</Label
 							>
 							<select
 								id="type"
@@ -424,7 +424,7 @@
 								<Label
 									for="theme"
 									class="text-xs font-semibold uppercase tracking-wider text-zinc-400"
-									>Event Track / Theme</Label
+									>Projrct Theme</Label
 								>
 								<select
 									id="theme"
@@ -446,7 +446,7 @@
 							<Label
 								for="hackatime"
 								class="text-xs font-semibold uppercase tracking-wider text-zinc-400"
-								>Synced Hackatime Project</Label
+								>Hackatime Project</Label
 							>
 							<select
 								id="hackatime"
@@ -455,7 +455,7 @@
 								bind:value={hackatime}
 							>
 								<option value="" disabled selected={!hackatime}
-									>Link an active analytics timeline</option
+									>Chooose</option
 								>
 								{#if mode === "update" && project?.fields.hackatime}
 									<option value={project.fields.hackatime}>
