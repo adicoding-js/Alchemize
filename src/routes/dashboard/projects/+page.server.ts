@@ -4,19 +4,19 @@ import { env } from '$env/dynamic/private';
 import { getDataFromAccessToken } from '$lib/utils';
 import { getProjectsByOwner, createProject, updateProject } from '$lib/db';
 import { USER_JWT_SECRET } from '$env/static/private';
-import type {UserAuthToken} from "$lib/types";
+import type { UserAuthToken } from "$lib/types";
 import jwt from 'jsonwebtoken';
 export const actions = {
     create: async (event) => {
 
         const accessToken = event.cookies.get('access_token_new');
         const user_token = event.cookies.get('user_token');
-        let data = {}   as UserAuthToken;
+        let data = {} as UserAuthToken;
         try {
             if (user_token) {
                 data = jwt.verify(user_token, USER_JWT_SECRET) as UserAuthToken;
             }
-            else{
+            else {
                 return {
                     success: false,
                     error: {
@@ -26,7 +26,7 @@ export const actions = {
                     }
                 }
             }
-        }catch (error) {
+        } catch (error) {
             console.error('Invalid user token:', error);
             return {
                 success: false,
@@ -54,7 +54,7 @@ export const actions = {
         tempFormData.append('file', screenshot);
         const cdnResponse = await fetch('https://cdn.hackclub.com/api/v4/upload', {
             method: 'POST',
-            headers: { 'Authorization': "Bearer "+ env.CDN_UPLOAD_SECRET },
+            headers: { 'Authorization': "Bearer " + env.CDN_UPLOAD_SECRET },
             body: tempFormData
         });
         if (!cdnResponse.ok) {
@@ -69,7 +69,7 @@ export const actions = {
             });
             throw new Error(`Screenshot upload failed: ${errorText}. Please notify TheUtkarsh8939 on slack with the error code: ${errorCode}`);
         }
-        const {url} = await cdnResponse.json();
+        const { url } = await cdnResponse.json();
         const response = await createProject({
             Name: projectName,
             description: projectDescription,
@@ -124,13 +124,13 @@ export const actions = {
     update: async (event) => {
 
         const accessToken = event.cookies.get('access_token_new');
-                const user_token = event.cookies.get('user_token');
-        let data = {}   as UserAuthToken;
+        const user_token = event.cookies.get('user_token');
+        let data = {} as UserAuthToken;
         try {
             if (user_token) {
                 data = jwt.verify(user_token, USER_JWT_SECRET) as UserAuthToken;
             }
-            else{
+            else {
                 return {
                     success: false,
                     error: {
@@ -140,7 +140,7 @@ export const actions = {
                     }
                 }
             }
-        }catch (error) {
+        } catch (error) {
             console.error('Invalid user token:', error);
             return {
                 success: false,
@@ -206,8 +206,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
     const accessToken = cookies.get('access_token_new') ?? cookies.get('access_token');
     const user_token = cookies.get('user_token');
     let decoded = null;
-    try{
-        if(user_token){
+    try {
+        if (user_token) {
             decoded = jwt.verify(user_token, USER_JWT_SECRET);
         }
     } catch (error) {
@@ -217,31 +217,36 @@ export const load: PageServerLoad = async ({ cookies }) => {
         return { error: 'No access token found' };
     }
     const email = decoded ? (decoded as any).email : null;
-    
-    let hackatimeAccessToken = cookies.get('hackatime_token');
-    let hacks = ""
-    if (hackatimeAccessToken) {
-
-        let hackatimes = await fetch(`https://hackatime.hackclub.com/api/v1/authenticated/projects?include_archived=false&start=${env.START_DATE}`, {
-            headers: {
-                Authorization: `Bearer ${hackatimeAccessToken}`,
-                "Content-Type": 'application/json'
-            }
-        })
-        hacks = await hackatimes.json()
-
-    }
-
     if (!accessToken) {
         return {
             projects: []
         }
     }
-    let projectsResponse = await getProjectsByOwner(email);
-    const projectsData = await projectsResponse.json();
+    let hackatimeAccessToken = cookies.get('hackatime_token');
+    let hacks = ""
+    if (hackatimeAccessToken) {
+
+        let [hackatimes, projectsResponse] = await Promise.all([
+            fetch(`https://hackatime.hackclub.com/api/v1/authenticated/projects?include_archived=false&start=${env.START_DATE}`, {
+                headers: {
+                    Authorization: `Bearer ${hackatimeAccessToken}`,
+                    "Content-Type": 'application/json'
+                },
+            }),
+            getProjectsByOwner(email)
+        ])
+        hacks = await hackatimes.json()
+
+        const projectsData = await projectsResponse.json();
+
+        return {
+            projects: projectsData.records,
+            hacks: hacks
+        };
+    }
 
     return {
-        projects: projectsData.records,
-        hacks: hacks
-    };
+        projects: []
+    }
+
 }

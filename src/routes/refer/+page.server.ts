@@ -1,7 +1,7 @@
 
-import { USERID_ENCRYPTION_KEY, BASE_URL,SLACK_BOT_TOKEN, USER_JWT_SECRET } from '$env/static/private';
+import { USERID_ENCRYPTION_KEY, BASE_URL, SLACK_BOT_TOKEN, USER_JWT_SECRET } from '$env/static/private';
 import type { PageServerLoad } from './$types';
-import {WebClient} from "@slack/web-api"
+import { WebClient } from "@slack/web-api"
 import type { AirtableReferRecord, Refers } from '$lib/types';
 import { getAllRefers } from '$lib/db';
 import jwt from 'jsonwebtoken';
@@ -22,10 +22,10 @@ const XORencrypt = (textInp: string) => {
 }
 
 const slackClient = new WebClient(SLACK_BOT_TOKEN)
-async function getUserName(userId:string) {
-  const result = await slackClient.users.info({ user: userId });
-  
-  return result.user?.profile?.display_name || "Unknown User"; 
+async function getUserName(userId: string) {
+    const result = await slackClient.users.info({ user: userId });
+
+    return result.user?.profile?.display_name || "Unknown User";
 }
 const getMyReferals = (userId: string, allRefers: AirtableReferRecord[]): Refers[] => {
     const myReferals: Refers[] = []
@@ -51,14 +51,21 @@ const getReferedCountsByReferer = async (allRefers: AirtableReferRecord[]): Prom
         slackUidCounts[uid] = (slackUidCounts[uid] || 0) + value
 
     }
-    const slackCounts: Record<string, number> = {}
-        
-    for (const [key, value] of Object.entries(slackUidCounts)) {
-        const uid = await getUserName(key)
-        slackCounts[uid] = (slackCounts[uid] || 0) + value
+    const entries = Object.entries(slackUidCounts);
+    const usernamePromises = entries.map(async ([key, value]) => {
+        const uid = await getUserName(key);
+        return { uid, value };
+    });
 
+    const resolvedUsers = await Promise.all(usernamePromises);
+
+
+    const slackCounts: Record<string, number> = {}
+    for (const { uid, value } of resolvedUsers) {
+        slackCounts[uid] = (slackCounts[uid] || 0) + value
     }
-    return slackCounts
+
+    return slackCounts;
 }
 export const load: PageServerLoad = async ({ url, cookies }) => {
     const at = cookies.get('access_token_new');
@@ -70,7 +77,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
         }
         catch (err) {
             console.error("Error verifying JWT:", err);
-        }  
+        }
     }
     const id = encodeURIComponent(XORencrypt(`${data.id.slice(6)} ${data.slack_id}`));
     let referalsResponse = await getAllRefers()
@@ -84,6 +91,6 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
         url: `${BASE_URL}/?refer=${id}`,
         myReferals,
         counts: referedCountsByReferer,
-        
+
     }
 }

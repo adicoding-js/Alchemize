@@ -260,7 +260,7 @@
 										class="size-5 border-2 border-gray-500 border-t-white rounded-full animate-spin"
 									></div>
 								{/if}
-								<i class="fa-solid fa-plus"></i> Add a ship
+								<i class="fa-solid fa-plus"></i> Ship
 							</Button>
 						</div>
 					</div>
@@ -431,7 +431,7 @@
 								<Label
 									for="theme"
 									class="text-xs font-semibold uppercase tracking-wider text-zinc-400"
-									>Projrct Theme</Label
+									>Project Theme</Label
 								>
 								<select
 									id="theme"

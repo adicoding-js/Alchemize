@@ -50,6 +50,7 @@ async function updateUserCurrency(amount: number, userEmailId: string, currencyT
         throw new Error(`Failed to update user currency: ${errorData.error.message}`)
     }
 }
+//@ts-ignore
 const themeToKeys = (theme: string): keyof UserCurrency => {
     const themeMap = themeCurrencyMaps as Record<string, keyof UserCurrency>
     return themeMap[theme]
@@ -77,7 +78,24 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     const oldLog = JSON.parse(log) as Log[]
     const [newLog, newDeltaTime] = updateLog(oldLog, -decreaseTime, userExternal, approver, internalNote, justification)
     const logJson = JSON.stringify(newLog)
-    const response = await patchProjectForShip(recordId, newLog, "accepted")
+    const currencyType = themeToKeys(theme)
+
+    const [response, userCurrency, botResponse] = await Promise.all([
+        patchProjectForShip(recordId, newLog, "accepted"),
+        updateUserCurrency(Math.floor(newDeltaTime / 60), userEmailId, currencyType),
+        fetch("https://aoishik.qzz.io/review-accept", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${BOT_AUTH}`
+            },
+            body: JSON.stringify(
+                { "user_id": slackId, "project_name": projectName, "project_link": projectLink, "reviewer_id": decoded.slackId, "feedback": userExternal, "currencies": `${Math.floor(newDeltaTime / 60)} ${currencyType}` }
+            )
+        })
+
+
+    ])
     if (!response.ok) {
         const errorData = await response.json()
         console.error("Failed to update project log:", {
@@ -87,28 +105,9 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         })
         return new Response("Failed to update project log", { status: 500 })
     }
-    const currencyType = themeToKeys(theme)
-    try {
-        await updateUserCurrency(Math.floor(newDeltaTime / 60), userEmailId, currencyType)
-    } catch (err) {
-        console.error("Failed to update user currency:", {
-            error: err instanceof Error ? err
-                .message : String(err),
-            timestamp: new Date().toISOString()
-        })
-        throw new Error("Failed to update user currency. Dm @TheUtkarsh8939 on Slack to resolve this issue and tell him to trigger user autogen")
 
-    }
-    const botResponse = await fetch("https://aoishik.qzz.io/review-accept", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${BOT_AUTH}`
-        },
-        body: JSON.stringify(
-        { "user_id": slackId, "project_name": projectName, "project_link": projectLink, "reviewer_id": decoded.slackId, "feedback": userExternal, "currencies": `${Math.floor(newDeltaTime / 60)} ${currencyType}` }
-        )
-    })
+
+
     if (!botResponse.ok) {
         console.warn(`Failed to send notification to bot for record ${recordId}:`, {
             status: botResponse.status,
@@ -118,7 +117,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             projectName: projectName,
             projectLink: projectLink
         })
-            return new Response(JSON.stringify({ message: "Bot Failed to send notification", newLog: newLog }), { status: 207 })
+        return new Response(JSON.stringify({ message: "Bot Failed to send notification", newLog: newLog }), { status: 207 })
 
     }
     return new Response(JSON.stringify({ message: "Project accepted and user currency updated successfully", newLog: newLog }), { status: 200 })

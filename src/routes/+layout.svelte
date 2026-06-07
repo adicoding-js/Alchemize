@@ -5,6 +5,6 @@
 	let { children } = $props()
 
 </script>
-<Toaster />
 <svelte:head><link rel="icon" href="/Alchemist.webp" /></svelte:head>
+<Toaster position="top-center" richColors expand={true}/>
 {@render children()}
