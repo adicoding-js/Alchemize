@@ -50,11 +50,9 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         const project = await projectResponse.json() as AdminProjectView
         const log = JSON.parse(project.fields.log) as Log[]
         const newLog = checkSubmittedToHQ(log)
-        const patchResponse = await patchProjectForShip(projectId, newLog, "accepted")
-        if (!patchResponse.ok) {
-            return error(500, "Failed to update project status")
-         }
-        const sendToJustificationResponse = await addToJustifications({
+        const [patchResponse, sendToJustificationResponse] = await Promise.all([
+            patchProjectForShip(projectId, newLog, "accepted"),
+            addToJustifications({
             projectId,
             email: project.fields.owner,
             demo: project.fields.demo || "",
@@ -72,6 +70,11 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             firstName: project.fields.firstName,
             lastName: project.fields.lastName
         })
+        ])
+       
+        if (!patchResponse.ok) {
+            return error(500, "Failed to update project status")
+         }
         if (!sendToJustificationResponse.ok) {
             return error(500, "Failed to send justification")
         }

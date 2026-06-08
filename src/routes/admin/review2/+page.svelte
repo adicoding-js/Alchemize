@@ -4,6 +4,7 @@
 	import Input from "$lib/components/ui/input/input.svelte"
 	import Textarea from "$lib/components/ui/textarea/textarea.svelte"
 	import type { Project, Log, AirtableProject } from "$lib/types"
+	import {toast} from "svelte-sonner"
 	let detailsOpen = $state(false)
 	let { data } = $props()
 	let airtableProjects = data.projects as AirtableProject[]
@@ -113,10 +114,12 @@ Signed by ${data.name}, T2 Reviewer
 			}),
 		})
 		if (response.ok) {
-			alert("Project sent to HQ successfully")
+			toast.success("Pushed "+currentProject.name+" to Airtable successfully!")
 			loader = false
+			airtableProjects = airtableProjects.filter(p => p.id !== currentProject.id)
+			currentProject = {} as Project
 		} else {
-			alert("Failed to send project to HQ")
+			toast.error("Failed to push project to Airtable. Please referesh")
 			loader = false
 		}
 	}

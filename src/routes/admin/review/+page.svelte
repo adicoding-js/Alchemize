@@ -6,7 +6,7 @@
 	import { invalidateAll } from "$app/navigation"
 	import type { Project, AirtableProject, Log } from "$lib/types"
 	import { countCharacters } from "$lib/utils"
-	import { updated } from "$app/state"
+	import { toast } from "svelte-sonner" 
 	let { data } = $props()
 	console.log(data)
 	let detailsOpen = $state(false)
@@ -109,7 +109,7 @@
 	) => {
 		rejectLoader = true
 		if (userExternalCount < 20) {
-			alert("Please provide sufficient user feedback before rejecting.")
+			toast.error("Please provide sufficient user feedback before rejecting.")
 			rejectLoader = false
 			return
 		}
@@ -131,10 +131,11 @@
 			}),
 		})
 		if (!response.ok) {
-			alert("Failed to reject project. Please referesh")
+			toast.error("Failed to reject project. Please referesh")
 			console.error("Failed to reject project", await response.text())
 			return new Response("Failed to reject project", { status: 500 })
 		}
+		toast.success("Rejected "+project.name+" successfully!")
 		const { newLog } = await response.json()
 		project.log = newLog
 		rejectLoader = false
@@ -173,7 +174,7 @@
 			projectLink: project.code,
 		})
 		if (userExternalCount < 20) {
-			alert("Please provide sufficient user feedback before approving.")
+			toast.error("Please provide sufficient user feedback before approving.")
 			acceptLoader = false
 			return
 		}
@@ -199,14 +200,14 @@
 			}),
 		})
 		if (!response.ok) {
-			alert("Failed to accept project. Please referesh")
+			toast.error("Failed to accept project. Please referesh")
 			console.error("Failed to accept project", await response.text())
 			return new Response("Failed to accept project", { status: 500 })
 		}
 		const { newLog } = await response.json()
 		project.log = newLog
 		acceptLoader = false
-
+		toast.success("Accepted "+project.name+" successfully!")
 		projects = projects.map(p => {
 			if (p.id === project.id) {
 				return {
