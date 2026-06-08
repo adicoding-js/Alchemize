@@ -202,10 +202,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		path: "/",
 		maxAge: 60 * 60 * 24 * 30 * 12,
 	})
-	if (newUser) {
-	throw redirect(303, "https://rsvp.hackclub.community/alchemize-ysws")
-
-	}else{
+	
 	throw redirect(303, "/dashboard")
-	}
+	
 }
