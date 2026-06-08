@@ -5,9 +5,10 @@
 	import Textarea from "$lib/components/ui/textarea/textarea.svelte"
 	import type { Project, Log, AirtableProject } from "$lib/types"
 	import {toast} from "svelte-sonner"
+	import {invalidateAll} from "$app/navigation"
 	let detailsOpen = $state(false)
 	let { data } = $props()
-	let airtableProjects = data.projects as AirtableProject[]
+	let airtableProjects = $derived(data.projects as AirtableProject[])
 	let project = $state({} as Project)
 	let justificationOpen = $state(false)
 	const wasEverApproved = (project: AirtableProject) => {
@@ -117,6 +118,7 @@ Signed by ${data.name}, T2 Reviewer
 			toast.success("Pushed "+currentProject.name+" to Airtable successfully!")
 			loader = false
 			airtableProjects = airtableProjects.filter(p => p.id !== currentProject.id)
+			invalidateAll()
 			currentProject = {} as Project
 		} else {
 			toast.error("Failed to push project to Airtable. Please referesh")
