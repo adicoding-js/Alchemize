@@ -95,11 +95,12 @@ export interface airtableReplication {
     id: string
     fields: any
 }
+const isNeon = DATABASE_URL?.includes("neon.tech");
 const pool = new Pool({
 	connectionString: DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    ssl: isNeon
+		? { rejectUnauthorized: false }
+		: false
 });
 
 const db = drizzle(pool); //Database Connection
