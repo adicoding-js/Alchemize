@@ -7,9 +7,13 @@ import { WebClient } from "@slack/web-api"
 
 const slackClient = new WebClient(SLACK_BOT_TOKEN)
 async function getUserName(userId:string) {
+    try{
   const result = await slackClient.users.info({ user: userId });
-  
+
   return result.user?.profile?.display_name || "Unknown User"; 
+    }catch(error){
+        return "Unknown User"
+    }
 }
 export const load: PageServerLoad = async ({params, cookies}) => {
 
