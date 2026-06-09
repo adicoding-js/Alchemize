@@ -2,8 +2,10 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import {Pool} from 'pg'
 import { eq } from 'drizzle-orm'
 import { integer, pgTable, varchar, } from "drizzle-orm/pg-core";
-import { DATABASE_URL } from '$env/static/private'
 import type { UserCurrency, Log } from './types'
+import dotenv from 'dotenv';
+dotenv.config();
+const DATABASE_URL = process.env.DATABASE_URL;
 // Schemas
 export const userTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -94,7 +96,10 @@ export interface airtableReplication {
     fields: any
 }
 const pool = new Pool({
-	connectionString: process.env.DATABASE_URL
+	connectionString: DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 const db = drizzle(pool); //Database Connection
@@ -103,13 +108,26 @@ const db = drizzle(pool); //Database Connection
 
 //User Functions
 export const getUserByEmail = async (email: string): Promise<DBResponse> => {
-    const users = await db.select().from(userTable).where(eq(userTable.email, email));
+
+    try{
+        const users = await db.select().from(userTable).where(eq(userTable.email, email));
     const records = users.map(user => ({ id: user.id + "", fields: user })) as airtableReplication[];
     return {
         ok: true,
         status: 200,
         json: async () => ({ records }),
         text: async () => JSON.stringify({ records }),
+    }
+    }catch(error){
+console.log(DATABASE_URL)
+
+        console.error("Database read failed:", error);
+        return {
+            ok: false,
+            status: 500,
+            json: async () => ({ message: "Database read failed" }),
+            text: async () => JSON.stringify({ message: "Database read failed" }),
+        };
     }
 }
 export const createNewUser = async (email: string, userid: string): Promise<DBResponse> => {
