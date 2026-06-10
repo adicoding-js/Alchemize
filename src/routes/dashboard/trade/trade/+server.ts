@@ -6,7 +6,11 @@ import {currenciesToPotionMix} from "$lib/utils"
 export const POST: RequestHandler = async ({ request, cookies }) => {
     const at = cookies.get('access_token_new');
     const { redstone, glowstone, aqua_regia } = await request.json();
-
+    if (redstone < 0 || glowstone < 0 || aqua_regia < 0) {
+        return new Response(JSON.stringify({
+            error: "Invalid currency amounts"
+        }), { status: 400 })
+    }
     const fetchRes = await fetch("https://auth.hackclub.com/api/v1/me", {
         headers: {
             Authorization: `Bearer ${at}`,
@@ -25,6 +29,11 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     const user = userData2.records[0].fields
     const userCurrencies = user.currency ? looseJson(user.currency) : {} as UserCurrency;
     const newPotionMix = currenciesToPotionMix(redstone, glowstone, aqua_regia);
+    if(userCurrencies.redstone < redstone || userCurrencies.glowstone < glowstone || userCurrencies.aqua_regia < aqua_regia) {
+        return new Response(JSON.stringify({
+            error: "Insufficient currency"
+        }), { status: 400 })
+    }
     const newCurrency = {
         redstone: (userCurrencies.redstone ?? 0) - redstone,
         glowstone: (userCurrencies.glowstone ?? 0) - glowstone,

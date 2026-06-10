@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit"
 import {upsertAdmin} from "$lib/db"
 import {WebClient} from "@slack/web-api"
-import { SLACK_BOT_TOKEN } from "$env/static/private"
+import { ADMIN_JWT_SECRET, SLACK_BOT_TOKEN } from "$env/static/private"
 import jwt from "jsonwebtoken"
 const webClient = new WebClient(SLACK_BOT_TOKEN)
 const rolesToRoleString = (isReviewer:boolean, isSuperAdmin:boolean, isFulfiller:boolean, isT2Reviewer:boolean) => {
@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({request, cookies}) => {
     try{
         const token = cookies.get("admin_jwt")
         if(!token) return new Response(JSON.stringify({ok: false, error: "Unauthorized"}), {status: 401})
-        let decoded = jwt.verify(token, SLACK_BOT_TOKEN) as {email: string, roles: string}
+        let decoded = jwt.verify(token, ADMIN_JWT_SECRET) as {email: string, roles: string}
         if(!decoded.roles.includes("super_admin")) return new Response(JSON.stringify({ok: false, error: "Forbidden"}), {status: 403})
     }catch(error){
         console.error("JWT verification failed:", error)

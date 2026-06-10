@@ -112,6 +112,7 @@ export interface AirtableUser {
 	fields: {
 		userId: string
 		email: string
+		hackatime: string
 		currency: string
 	}
 }

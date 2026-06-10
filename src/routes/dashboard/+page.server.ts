@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { START_DATE, SLACK_BOT_TOKEN } from '$env/static/private';
+import { START_DATE, SLACK_BOT_TOKEN, USER_JWT_SECRET } from '$env/static/private';
 import { getProjectsByOwner, getUserByEmail } from '$lib/db';
 import { WebClient } from "@slack/web-api"
 import { redirect } from '@sveltejs/kit';
@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     let decodedToken: any = null
     try {
         if (userToken) {
-            const decoded: any = jwt.decode(userToken);
+            const decoded: any = jwt.verify(userToken, USER_JWT_SECRET);
             decodedToken = decoded
         } else {
             throw new Error("No user token found");
