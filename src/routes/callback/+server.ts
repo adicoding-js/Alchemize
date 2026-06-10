@@ -79,7 +79,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		console.error("Database error:", await userResponse.text())
 		return error(userResponse.status, "Database error")
 	}
-	let userData: AirtableUser[] = await userResponse.json()
+	let userData: AirtableUser[] = (await userResponse.json()).records
 	
 	if (userData.length === 0) {
 		newUser = true
@@ -90,6 +90,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		}
 		userRecordId = (await createResponse.json()).id
 	}else{
+		
 		userRecordId = userData[0].id
 	}
 	if (referCookie && newUser) {
