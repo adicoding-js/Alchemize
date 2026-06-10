@@ -3,7 +3,7 @@ import { getUserByEmail } from "$lib/db"
 import type { UserCurrency } from "$lib/types";
 import type { PageServerLoad } from "./$types";
 import looseJson from "loose-json"
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 
 export const load: PageServerLoad = async ({ cookies }) => {
     const at = cookies.get('access_token_new');
@@ -32,6 +32,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     let user = userData.records[0].fields
     let userCurrencies = 
 		looseJson(user.currency ?? "{}") as UserCurrency
+    
     return {
         currencies: userCurrencies,
     }
