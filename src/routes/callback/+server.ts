@@ -1,21 +1,32 @@
 import { env } from "$env/dynamic/private"
 import { error, redirect } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
-import type {UserAuthToken} from "$lib/types"
+import type { UserAuthToken } from "$lib/types"
 import { jwtDecode } from "jwt-decode"
+import type { AirtableUser } from "$lib/types"
 import jwt from "jsonwebtoken"
 import { createNewUser, getUserByEmail, createReferRecord } from "$lib/db"
 const XORdecrypt = (textInp: string) => {
-	const tb = Buffer.from(textInp, 'base64');
-	const kb = Buffer.from(env.USERID_ENCRYPTION_KEY, "hex");
+	const tb = Buffer.from(textInp, "base64")
+	const kb = Buffer.from(env.USERID_ENCRYPTION_KEY, "hex")
 	const out = Buffer.alloc(tb.length)
 
 	for (let i = 0; i < tb.length; i++) {
 		out[i] = tb[i] ^ kb[i % kb.length]
 	}
-	return out.toString('utf-8');
+	return out.toString("utf-8")
 }
 export const GET: RequestHandler = async ({ url, cookies }) => {
+	// All Cookies Used
+	// airtable_user_record_id: Stores the Airtable record ID of the user, used for database operations
+	// user_token: JWT containing user information, used for authentication and authorization in the app
+	// access_token_new: The access token from Hack Club OAuth, used for making authenticated requests to Hack Club API
+	// NON HTTPONLY -> hackatime_verified: A flag to indicate if the user has a verified Hackatime account, used for conditional rendering and features
+	// hackatime_token: The user's Hackatime token, used for integrating Hackatime features in the app
+	// slack_id: The user's Slack ID from Hack Club, used for Slack integration features in the app
+	// Hackatime Token stored for 1 year
+	// User Token stored for 4 months
+	// Hack Club Auth tokens stored for 6 months (refresh tokens not used, so access tokens are long-lived)
 	const code = url.searchParams.get("code")
 	const referCookie = cookies.get("refer")
 
@@ -30,7 +41,6 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, "Missing OAuth environment variables")
 	}
-
 
 	const tokenResponse = await fetch("https://auth.hackclub.com/oauth/token", {
 		method: "POST",
@@ -54,155 +64,110 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			tokenBody?.message ?? "Token exchange failed"
 		)
 	}
-	const airtableUserRecordId = cookies.get("airtable_user_record_id")
-	let userRecordIdGlobal: string = ""
-	if (!airtableUserRecordId) {
-		//Check Database for user with email fro tokenBody.id_token, if not found, create new user and set cookie with new record id, if found, set cookie with existing record id
-		const decodedToken: any = jwtDecode(tokenBody.id_token)
-		const email = decodedToken?.email
-		if (!email) {
-			throw error(400, "Email not found in ID token")
-		}
-		const airtableResponse = await getUserByEmail(email)
-		const airtableData = await airtableResponse.json()
-		if (!airtableResponse.ok) {
-			throw error(
-				airtableResponse.status,
-				airtableData?.message ?? "Failed to fetch user from Airtable"
-			)
-		}
-		let userRecordId: string
-		if (airtableData.records.length === 0) {
-			newUser = true
-			// Create new user
-			const createResponse = await createNewUser(email, decodedToken.sub)
-			const createData = await createResponse.json()
-			if (!createResponse.ok) {
-				console.log(createData)
-				throw error(
-					createResponse.status,
-					createData?.message ?? "Failed to create user in Airtable"
-				)
-			}
-			userRecordId = createData.id
-
-			if (referCookie) {
-				const getMeResponse = await fetch("https://auth.hackclub.com/api/v1/me", {
-					headers: {
-						Authorization: `Bearer ${tokenBody.access_token}`,
-					},
-				})
-				if (!getMeResponse.ok) {
-					const errorData = await getMeResponse.json()
-					console.log(errorData)
-					console.warn("Failed to fetch user info from Hack Club API, but user was created successfully")
-				}
-				const meData = await getMeResponse.json()
-				const verification_status = meData?.identity?.verification_status
-				const ysws_eligible = meData?.identity?.ysws_eligible
-				if (ysws_eligible) {
-					const referer = XORdecrypt(referCookie)
-					const createReferRecordResponse = await createReferRecord(
-						decodedToken.email,
-						referer,
-						"true",
-						verification_status,
-						meData?.identity?.first_name ?? "Unknown"
-					)
-							
-					if (!createReferRecordResponse.ok) {
-						const createReferRecordData = await createReferRecordResponse.json()
-						console.log(createReferRecordData)
-						console.warn("Failed to create refer record in Airtable, but user was created successfully")
-					}
-				}
-				cookies.delete("refer", { path: "/" })
-			}
-		} else {
-			userRecordId = airtableData.records[0].id
-			userHackatime = airtableData.records[0].fields.hackatime
-			if (!userHackatime) {
-				userHackatime = ""
-			}
-			newUser = false
-		}
-		cookies.set("airtable_user_record_id", userRecordId, {
-			httpOnly: true,
-			secure: true,
-			sameSite: "lax",
-			path: "/",
-			maxAge: 60 * 60 * 24 * 30 * 6,
-		})
-		userRecordIdGlobal = userRecordId
+	const decodedToken: any = jwtDecode(tokenBody.id_token)
+	const email = decodedToken.email
+	const name = decodedToken.name
+	const slackId = decodedToken.slack_id
+	const hackClubId = decodedToken.sub
+	const firstName = decodedToken.nickname
+	const verification = decodedToken.verification_status
+	const yswsEligible = decodedToken.ysws_eligible
+	let userRecordId = ""
+	//Look for user in DB, if not found create new user
+	const userResponse = await getUserByEmail(email)
+	if (!userResponse.ok) {
+		console.error("Database error:", await userResponse.text())
+		return error(userResponse.status, "Database error")
 	}
-	const extraInfoData = await fetch("https://auth.hackclub.com/api/v1/me", {
-		headers: {
-			Authorization: `Bearer ${tokenBody.access_token}`,
-		},
-	})
-	const extraInfo = await extraInfoData.json()
-	if (!extraInfoData.ok) {
-		throw error(
-			extraInfoData.status,
-			extraInfo?.message ?? "Failed to fetch extra user info"
-		)
-	}
-	console.log(extraInfo)
-	if (extraInfo?.identity.slack_id) {
-		cookies.set("slack_id", extraInfo.identity.slack_id, {
-			httpOnly: false,
-			secure: true,
-			sameSite: "lax",
-			path: "/",
-			maxAge: 60 * 60 * 24 * 30 * 6,
-		})
-	}
-	if (extraInfo){
-		const payload: UserAuthToken = {
-			id: extraInfo.identity.id,
-			dbid: userRecordIdGlobal,
-			email: extraInfo.identity.primary_email,
-			verification_status: extraInfo.identity.verification_status,
-			first_name: extraInfo.identity.first_name,
-			last_name: extraInfo.identity.last_name,
-			slack_id: extraInfo.identity.slack_id,
-			ysws_eligible: extraInfo.identity.ysws_eligible
-		}
-		const secret = env.USER_JWT_SECRET
-		const userToken = jwt.sign(payload, secret, { algorithm: "HS256", expiresIn: "120d" })
-		cookies.set("user_token", userToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: "lax",
-			path: "/",
-			maxAge: 60 * 60 * 24 * 30 * 4,
-		})
-	}
+	let userData: AirtableUser[] = await userResponse.json()
 	
+	if (userData.length === 0) {
+		newUser = true
+		const createResponse = await createNewUser(email, hackClubId)
+		if (!createResponse.ok) {
+			console.error("Database error:", await createResponse.text())
+			return error(createResponse.status, "Database error")
+		}
+		userRecordId = (await createResponse.json()).id
+	}else{
+		userRecordId = userData[0].id
+	}
+	if (referCookie && newUser) {
+		const decodedRefer = XORdecrypt(referCookie)
+		//Verify format of decoded refer
+		if (
+			decodedRefer.split(" ").length !== 2 ||
+			!decodedRefer.split(" ")[1].startsWith("U")
+		) {
+			throw error(400, "Invalid referral code")
+		}
+		const referRespone = await createReferRecord(
+			email,
+			decodedRefer,
+			yswsEligible,
+			verification,
+			firstName
+		)
+		if (!referRespone.ok) {
+			console.error("Database error:", await referRespone.text())
+			return error(referRespone.status, "Database error")
+		}
+	}
+	const userToken: UserAuthToken = {
+		id: hackClubId,
+		dbid: userRecordId,
+		email,
+		verification_status: verification,
+		first_name: firstName,
+		last_name: name.split(" ").slice(1).join(" "),
+		slack_id: slackId,
+		ysws_eligible: yswsEligible,
+	}
+	const jwtToken = jwt.sign(userToken, env.USER_JWT_SECRET, { expiresIn: "120d" })
+	cookies.set("user_token", jwtToken, {
+		httpOnly: true,
+		secure: true,
+		sameSite: "lax",
+		maxAge: 60 * 60 * 24 * 120, // 120 days
+		path: "/",
+	})
+	cookies.set("airtable_user_record_id", userRecordId, {
+		httpOnly: true,
+		secure: true,
+		sameSite: "lax",
+		maxAge: 60 * 60 * 24 * 365, // 1 year
+		path: "/",
+	})
 	cookies.set("access_token_new", tokenBody.access_token, {
 		httpOnly: true,
 		secure: true,
 		sameSite: "lax",
+		maxAge: 60 * 60 * 24 * 180, // 6 months
 		path: "/",
-		maxAge: 60 * 60 * 24 * 30 * 6,
-	})
 
-
-	cookies.set("hackatime_verified", "true", {
-		httpOnly: false,
-		secure: true,
-		sameSite: "lax",
-		path: "/",
-		maxAge: 60 * 60 * 24 * 30 * 12,
 	})
-	cookies.set("hackatime_token", userHackatime, {
+	cookies.set("slack_id", slackId, {
 		httpOnly: true,
 		secure: true,
 		sameSite: "lax",
+		maxAge: 60 * 60 * 24 * 365, // 1 year
 		path: "/",
-		maxAge: 60 * 60 * 24 * 30 * 12,
 	})
-	
+	if(userData.length > 0 && userData[0].fields.hackatime){
+		cookies.set("hackatime_token", userData[0].fields.hackatime, {
+			httpOnly: true,
+			secure: true,
+			sameSite: "lax",
+			maxAge: 60 * 60 * 24 * 365, // 1 year
+			path: "/",
+		})
+		cookies.set("hackatime_verified", "true", {
+			httpOnly: false,
+			secure: true,
+			sameSite: "lax",
+			maxAge: 60 * 60 * 24 * 365, // 1 year
+			path: "/",
+		})
+	}
 	throw redirect(303, "/dashboard")
-	
 }
