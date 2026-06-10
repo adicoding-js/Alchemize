@@ -58,7 +58,7 @@
 			.then(data => (rsvpCount = data.count))
 	})
 </script>
-<div class="fixed -z-20 bg-[url('/new.png')] bg-cover bg-center w-screen h-screen blur-xl"></div>
+<div class="fixed -z-20 bg-[url('/new.png')] bg-cover bg-center w-screen h-screen"></div>
 <div
 	class="relative min-h-screen w-full bg-[linear-gradient(to_bottom,#00000030_20%,#000c_70%)] text-zinc-100 font-mono tracking-wide selection:bg-primary selection:text-primary-foreground overflow-x-hidden"
 >
