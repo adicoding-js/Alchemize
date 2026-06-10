@@ -133,13 +133,24 @@ console.log(DATABASE_URL)
 }
 export const createNewUser = async (email: string, userid: string): Promise<DBResponse> => {
     const currency = JSON.stringify({ redstone: 0, glowstone: 0, aqua_regia: 0, potion_mix: 0 } as UserCurrency)
+    try{
     const newUser = await db.insert(userTable).values({ email, userid: userid, hackatime: "", currency: currency }).returning();
+
     return {
         ok: true,
         status: 201,
         json: async () => ({ id: newUser[0].id + "", fields: { email, userid, hackatime: "", currency: "" } } as airtableReplication),
         text: async () => JSON.stringify({ id: newUser[0].id + "", fields: { email, userid, hackatime: "", currency: "" } } as airtableReplication),
     } as DBResponse;
+    }catch(error){
+        console.error("Database insert failed:", error);
+        return {
+            ok: false,
+            status: 500,
+            json: async () => ({ message: "Database insert failed" }),
+            text: async () => JSON.stringify({ message: "Database insert failed" }),
+        };
+    }
 }
 export const patchUserHackatime = async (email: string, hackatimeToken: string): Promise<DBResponse> => {
     const updatedUser = await db.update(userTable).set({ hackatime: hackatimeToken }).where(eq(userTable.email, email)).returning();

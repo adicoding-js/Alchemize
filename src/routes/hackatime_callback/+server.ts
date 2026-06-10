@@ -1,17 +1,20 @@
 import { env } from '$env/dynamic/private';
 import { error, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { jwtDecode } from 'jwt-decode';
-import { getDataFromAccessToken } from '$lib/utils';
-import { getUserByEmail, patchUserHackatime } from '$lib/db';
-type IdTokenClaims = {
-	email?: string;
-};
+import jwt from 'jsonwebtoken';
+import {USER_JWT_SECRET} from '$env/static/private'
+import { patchUserHackatime } from '$lib/db';
+import type {UserAuthToken} from '$lib/types';
+
 
 export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 	const code = url.searchParams.get('code');
+	const userToken = cookies.get('user_token');
 	if (!code) {
 		throw error(400, 'Missing authorization code');
+	}
+	if (!userToken) {
+		throw redirect(303, '/');
 	}
 
 	const clientId = env.HACKATIME_AUTH ?? env.PUBLIC_HACKATIME_AUTH;
@@ -46,26 +49,26 @@ export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 
 
 
-		const at = cookies.get('access_token_new') ?? cookies.get('access_token');
-		if (!at) {
-			throw error(401, 'Missing access token cookie');
+	const at = cookies.get('access_token_new') ?? cookies.get('access_token');
+	if (!at) {
+		throw error(401, 'Missing access token cookie');
+	}
+	let userData: UserAuthToken;
+	try {
+		let decoded= jwt.verify(userToken, USER_JWT_SECRET) as unknown as UserAuthToken;
+		if (!decoded.email) {
+			throw new Error('Email claim missing in JWT');
 		}
-		const email = (await getDataFromAccessToken(at)).email;
-
-		const userLookupResponse = await getUserByEmail(email);
-
-		const userLookupBody = await userLookupResponse.json().catch(() => null);
-		if (!userLookupResponse.ok) {
-			throw error(userLookupResponse.status, userLookupBody?.message ?? 'Failed to find Airtable user');
-		}
-
-		const record = userLookupBody?.records?.[0];
-		if (!record?.id) {
-			throw error(404, 'Airtable user not found');
-		}
+		userData = decoded;
+	}catch (err) {
+		console.error('JWT verification failed:', err);
+		throw error(401, 'Invalid User token');
+	}
+	let email = userData?.email
 
 
-	
+
+
 
 	const patchResponse = await patchUserHackatime(email, tokenBody.access_token);
 
