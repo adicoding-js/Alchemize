@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import {PUBLIC_HACKATIME_AUTH, PUBLIC_HACKATIME_REDIRECT} from '$env/static/public'
 import { error, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import jwt from 'jsonwebtoken';
@@ -17,9 +18,9 @@ export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 		throw redirect(303, '/');
 	}
 
-	const clientId = env.HACKATIME_AUTH ?? env.PUBLIC_HACKATIME_AUTH;
+	const clientId = PUBLIC_HACKATIME_AUTH;
 	const clientSecret = env.HACKATIME_SECRET;
-	const redirectUri = env.HACKATIME_REDIRECT ?? env.PUBLIC_HACKATIME_REDIRECT;
+	const redirectUri = PUBLIC_HACKATIME_REDIRECT;
 
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, 'Missing Hackatime OAuth environment variables');

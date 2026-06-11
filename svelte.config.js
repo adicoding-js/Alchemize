@@ -12,6 +12,7 @@ const config = {
 		// Dynamically swap the adapter here
 		adapter: isVercelTarget ? adapterVercel() : adapterNode()
 	}
+	
 };
 
 export default config;

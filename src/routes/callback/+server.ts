@@ -1,4 +1,5 @@
 import { env } from "$env/dynamic/private"
+import {PUBLIC_HACKCLUB_AUTH, PUBLIC_HACKCLUB_REDIRECT} from "$env/static/public"
 import { error, redirect } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
 import type { UserAuthToken } from "$lib/types"
@@ -34,9 +35,9 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (!code) {
 		throw error(400, "Missing authorization code")
 	}
-	const clientId = env.HACKCLUB_AUTH
+	const clientId = PUBLIC_HACKCLUB_AUTH
 	const clientSecret = env.HACKCLUB_SECRET
-	const redirectUri = env.HACKCLUB_REDIRECT
+	const redirectUri = PUBLIC_HACKCLUB_REDIRECT
 	let newUser = false
 	if (!clientId || !clientSecret || !redirectUri) {
 		throw error(500, "Missing OAuth environment variables")
