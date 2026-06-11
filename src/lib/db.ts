@@ -132,16 +132,16 @@ export const getUserByEmail = async (email: string): Promise<DBResponse> => {
         };
     }
 }
-export const createNewUser = async (email: string, userid: string): Promise<DBResponse> => {
+export const createNewUser = async (email: string, userid: string, slackId: string): Promise<DBResponse> => {
     const currency = JSON.stringify({ redstone: 0, glowstone: 0, aqua_regia: 0, potion_mix: 0 } as UserCurrency)
     try{
-    const newUser = await db.insert(userTable).values({ email, userid: userid, hackatime: "", currency: currency }).returning();
+    const newUser = await db.insert(userTable).values({ email, userid: userid, slackId, hackatime: "", currency: currency }).returning();
 
     return {
         ok: true,
         status: 201,
-        json: async () => ({ id: newUser[0].id + "", fields: { email, userid, hackatime: "", currency: "" } } as airtableReplication),
-        text: async () => JSON.stringify({ id: newUser[0].id + "", fields: { email, userid, hackatime: "", currency: "" } } as airtableReplication),
+        json: async () => ({ id: newUser[0].id + "", fields: { email, userid, slackId, hackatime: "", currency: "" } } as airtableReplication),
+        text: async () => JSON.stringify({ id: newUser[0].id + "", fields: { email, userid, slackId, hackatime: "", currency: "" } } as airtableReplication),
     } as DBResponse;
     }catch(error){
         console.error("Database insert failed:", error);

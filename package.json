@@ -49,6 +49,7 @@
 		"jwt-decode": "^4.0.0",
 		"lucide-svelte": "^1.0.1",
 		"marked": "^18.0.2",
+		"p-limit": "^7.3.0",
 		"pg": "^8.21.0",
 		"radix-ui": "^1.4.3",
 		"shadcn": "^4.6.0",

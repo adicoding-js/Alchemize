@@ -84,7 +84,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	
 	if (userData.length === 0) {
 		newUser = true
-		const createResponse = await createNewUser(email, hackClubId)
+		const createResponse = await createNewUser(email, hackClubId, slackId)
 		if (!createResponse.ok) {
 			console.error("Database error:", await createResponse.text())
 			return error(createResponse.status, "Database error")
