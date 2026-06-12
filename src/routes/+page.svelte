@@ -141,10 +141,10 @@
 				<p
 					class="text-zinc-200 text-base md:text-xl leading-relaxed uppercase tracking-wide"
 				>
-					Turn your code into prizes.<br />
+					3 Themes | 3 Seasons <br />
 					<strong
 						class="text-white font-black text-lg md:text-2xl block mt-1 tracking-tight"
-						>And you're invited.</strong
+						>And a whole lot of mixing</strong
 					>
 				</p>
 				<div
