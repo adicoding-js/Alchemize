@@ -26,11 +26,16 @@
 		loading = false
 	})
 </script>
+
 {#if loading || $navigating}
-<div class="loading-screen w-screen h-screen bg-black flex items-center justify-center absolute top-0 z-20 flex-col gap-4">
-	<div class="loader rounded-full size-26 border-2 border-t-red-600 animate-spin border-gray-700"></div>
-	<span class="text-white text-lg ml-4">Loading your referrals...</span>
-</div>
+	<div
+		class="loading-screen w-screen h-screen bg-black flex items-center justify-center absolute top-0 z-20 flex-col gap-4"
+	>
+		<div
+			class="loader rounded-full size-26 border-2 border-t-red-600 animate-spin border-gray-700"
+		></div>
+		<span class="text-white text-lg ml-4">Loading your referrals...</span>
+	</div>
 {/if}
 <main
 	class="flex gap-6 bg-gradbg p-6 w-screen h-screen overflow-hidden text-foreground"
@@ -51,52 +56,70 @@
 				Copy
 			</button>
 		</div>
-		<div
-			class="w-full flex-1 flex flex-col p-5 bg-background/40 rounded-3xl gap-3 min-h-0 shadow-lg backdrop-blur-sm"
-		>
-			<h1 class="font-alchemize text-2xl text-center mb-2 tracking-wide">
-				Your Referrals
-			</h1>
-			<div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-3">
-				{#each myReferals as referal}
-					<div
-						class="w-full rounded-xl border border-primary/40 bg-background flex items-center justify-between gap-4 p-4 shadow-sm hover:border-primary/80 transition-all duration-200"
-					>
-						<p class="text-xl">{referal.referedName}</p>
-					</div>
-				{/each}
-				{#if data.myReferals.length === 0}
-					<p class="text-center text-lg opacity-80 mt-10">
-						You haven't referred anyone yet. Share your link to start
-						referring!
-					</p>
-				{/if}
-
+		<div class="relative w-full flex-1 group">
+			<div
+				class="absolute inset-0 bg-primary translate-x-1 translate-y-1 rounded-xl transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"
+			></div>
+			<div
+				class="w-full h-full flex flex-col p-5 bg-zinc-950 rounded-xl gap-3 min-h-0 shadow-lg backdrop-blur-sm border-primary/50 border-2"
+			>
+				<h1 class="font-alchemize text-2xl text-center mb-2 tracking-wide">
+					Your Referrals
+				</h1>
+				<div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-3">
+					{#each myReferals as referal}
+						<div class="relative group">
+							<div
+								class="absolute inset-0 bg-primary translate-x-0.5 translate-y-0.5 rounded-md transition-transform z-0"
+							></div>
+							<div
+								class="relative z-10 w-full rounded-md border border-primary/40 bg-zinc-950 flex items-center justify-between gap-4 p-4 shadow-sm hover:border-primary/80 transition-all duration-200"
+							>
+								<p class="text-xl">{referal.referedName}</p>
+							</div>
+						</div>
+					{/each}
+					{#if data.myReferals.length === 0}
+						<p class="text-center text-lg opacity-80 mt-10">
+							You haven't referred anyone yet. Share your link to start
+							referring!
+						</p>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="h-full w-[50%] flex flex-col gap-y-6">
-		<div
-			class="w-full h-full flex flex-col p-5 bg-background/40 rounded-3xl gap-3 min-h-0 shadow-lg backdrop-blur-sm"
-		>
-			<h1 class="font-alchemize text-2xl text-center mb-2 tracking-wide">
-				Top referers
-			</h1>
-			<div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-3">
-				{#each sortedCounts as [name, count]}
-						<div
-					class="w-full rounded-xl border border-primary/40 bg-background flex items-center justify-between gap-4 p-4 shadow-sm hover:border-primary/80 transition-all duration-200"
-				>
-					<p class="text-xl">{name}</p>
-					<p class="text-xl font-bold text-primary">{count}</p>
+		<div class="relative w-full max-h-full flex-1 group">
+			<div
+				class="absolute inset-0 bg-primary translate-x-1 translate-y-1 rounded-xl transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"
+			></div>
+			<div
+				class="w-full max-h-full h-full flex flex-col p-5 bg-zinc-950 rounded-xl gap-3 min-h-0 shadow-lg backdrop-blur-sm border-primary/50 border-2"
+			>
+				<h1 class="font-alchemize text-2xl text-center mb-2 tracking-wide">
+					Top referers
+				</h1>
+				<div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 p-2">
+					{#each sortedCounts as [name, count]}
+						<div class="relative flex-1 group">
+							<div
+								class="absolute inset-0 bg-primary translate-x-0.5 translate-y-0.5 rounded-md transition-transform z-0"
+							></div>
+							<div
+								class="relative z-10 w-full rounded-md border border-primary/40 bg-zinc-950 flex items-center justify-between gap-4 p-4 shadow-sm hover:border-primary/80 transition-all duration-200"
+							>
+								<p class="text-xl">{name}</p>
+								<p class="text-xl font-bold text-primary">{count}</p>
+							</div>
+						</div>
+					{/each}
+					{#if sortedCounts.length === 0}
+						<p class="text-center text-lg opacity-80 mt-10">
+							No referrals yet. Be the first to refer someone!
+						</p>
+					{/if}
 				</div>
-				{/each}
-				{#if sortedCounts.length === 0}
-					<p class="text-center text-lg opacity-80 mt-10">
-						No referrals yet. Be the first to refer someone!
-					</p>
-				{/if}
-
 			</div>
 		</div>
 	</div>
