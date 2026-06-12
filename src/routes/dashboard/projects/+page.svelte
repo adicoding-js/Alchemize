@@ -56,7 +56,7 @@
 	let hackSecondsByName = $derived(
 		new Map(
 			hacks.map(hack => [
-				(hack.name ?? hack.project_name ?? hack.project ?? "")
+				(hack.name ?? hack.project_name ?? hack.project ?? ""),
 				hack.total_seconds ?? 0,
 			])
 		)
