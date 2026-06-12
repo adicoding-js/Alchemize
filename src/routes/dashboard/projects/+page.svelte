@@ -39,7 +39,7 @@
 		new Set(
 			projects
 				.flatMap(project => project.fields.hackatime?.split(",") ?? [])
-				.map(name => name)
+				.map(name => name.trim())
 				.filter(Boolean)
 		)
 	)
@@ -58,7 +58,6 @@
 			hacks.map(hack => [
 				(hack.name ?? hack.project_name ?? hack.project ?? "")
 					.trim()
-					.toLowerCase(),
 				hack.total_seconds ?? 0,
 			])
 		)
