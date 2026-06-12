@@ -57,7 +57,6 @@
 		new Map(
 			hacks.map(hack => [
 				(hack.name ?? hack.project_name ?? hack.project ?? "")
-					.trim()
 				hack.total_seconds ?? 0,
 			])
 		)
