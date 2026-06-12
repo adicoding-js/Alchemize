@@ -36,16 +36,15 @@
 	)
 	let referUrl = $state(`./refer`)
 
-	const TEN_DAYS_IN_MS = 9 * 24 * 60 * 60 * 1000
-	const targetDate = Date.now() + TEN_DAYS_IN_MS
-	let timeLeft = $state(TEN_DAYS_IN_MS)
+	const targetDate = new Date("2026-06-21T01:00:00Z").getTime()
+	let timeLeft = $state(Math.max(0, targetDate - Date.now()))
 
 	let time = $derived(formatTime(timeLeft))
 
 	$effect(() => {
 		const interval = setInterval(() => {
 			const difference = targetDate - Date.now()
-			
+
 			if (difference <= 0) {
 				timeLeft = 0
 				clearInterval(interval)
