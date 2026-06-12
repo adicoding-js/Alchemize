@@ -107,7 +107,7 @@
 <main
 	class="min-h-screen w-full bg-gradbg text-foreground px-2 py-6 md:p-10 font-mono tracking-wide selection:bg-primary selection:text-primary-foreground relative overflow-x-hidden"
 >
-	<div class="fixed inset-0 bg-black/60 z-0 pointer-events-none"></div>
+	<div class="fixed inset-0 bg-black/20 z-0 pointer-events-none"></div>
 
 	<div class="relative z-10 w-full mx-2 flex flex-col gap-8">
 		<div
