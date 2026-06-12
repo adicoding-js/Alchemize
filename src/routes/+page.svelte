@@ -6,8 +6,8 @@
 		FlaskConical,
 		Rocket,
 		ShoppingCart,
-		Users,
 		X,
+		Users,
 	} from "lucide-svelte"
 	import { onMount } from "svelte"
 	import { browser } from "$app/environment"
@@ -16,6 +16,7 @@
 		PUBLIC_HACKCLUB_REDIRECT,
 	} from "$env/static/public"
 	import Accordion from "$lib/components/accordion.svelte"
+
 	let { data } = $props()
 	let rsvpCount: number | "Fetching" = $state("Fetching")
 	let showRotator = $state(false)
@@ -34,6 +35,42 @@
 			: `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&response_type=code&scope=openid+profile+email+name+verification_status+slack_id&redirect_uri=${uri}`
 	)
 	let referUrl = $state(`./refer`)
+
+	const targetDate = new Date("2026-06-21T01:00:00Z").getTime()
+	let timeLeft = $state(Math.max(0, targetDate - Date.now()))
+
+	let time = $derived(formatTime(timeLeft))
+
+	$effect(() => {
+		const interval = setInterval(() => {
+			const difference = targetDate - Date.now()
+
+			if (difference <= 0) {
+				timeLeft = 0
+				clearInterval(interval)
+			} else {
+				timeLeft = difference
+			}
+		}, 1000)
+
+		return () => clearInterval(interval)
+	})
+
+	function formatTime(ms: number) {
+		if (ms <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+
+		const seconds = Math.floor((ms / 1000) % 60)
+		const minutes = Math.floor((ms / 1000 / 60) % 60)
+		const hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
+		const days = Math.floor(ms / (1000 * 60 * 60 * 24))
+
+		return {
+			days: days.toString().padStart(2, "0"),
+			hours: hours.toString().padStart(2, "0"),
+			minutes: minutes.toString().padStart(2, "0"),
+			seconds: seconds.toString().padStart(2, "0"),
+		}
+	}
 
 	onMount(() => {
 		if (data.error) {
@@ -58,7 +95,10 @@
 			.then(data => (rsvpCount = data.count))
 	})
 </script>
-<div class="fixed -z-20 bg-[url('/new.png')] bg-cover bg-center w-screen h-screen blur-sm"></div>
+
+<div
+	class="fixed -z-20 bg-[url('/new.png')] bg-cover bg-center w-screen h-screen blur-sm"
+></div>
 <div
 	class="relative min-h-screen w-full bg-[linear-gradient(to_bottom,#00000030_20%,#000c_70%)] text-zinc-100 font-mono tracking-wide selection:bg-primary selection:text-primary-foreground overflow-x-hidden"
 >
@@ -155,37 +195,65 @@
 					<div
 						class="absolute bottom-full left-0 mb-2 hidden group-hover:block w-full z-50 bg-zinc-900 border-2 border-zinc-700 p-3 rounded-none text-xs text-zinc-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
 					>
-						Propagate your personal invite matrix endpoint link to unlock
-						exclusive tiers!
+						Invite more people for cool rewards
 					</div>
 				</div>
 			</div>
 
 			<div
-				class="flex flex-col gap-2 max-w-sm bg-black/50 border border-zinc-800 p-4 rounded-none"
+				class="flex flex-col gap-2 max-w-sm bg-black/50 border border-zinc-800 p-4 rounded-none font-mono"
 			>
 				<div
-					class="flex justify-between items-center text-xs uppercase font-bold tracking-widest text-zinc-400"
+					class="text-[10px] text-zinc-500 tracking-wider font-bold uppercase mb-1"
 				>
-					<span>RSVP Count</span>
-					<span class="text-primary font-mono font-black"
-						>{rsvpCount} / ???RSVPs</span
-					>
+					// TIME_REMAINING_UNTIL_LAUNCH
 				</div>
-				<div
-					class="bg-zinc-950 border border-zinc-800 rounded-none w-full h-4 p-0.5 overflow-hidden"
-				>
-					<div
-						class="bg-primary h-full transition-all duration-1000 relative shadow-[0_0_10px_rgba(var(--primary),0.4)]"
-						style="width: {((typeof rsvpCount === 'string' ? 289 : rsvpCount) /
-							210) *
-							100}%"
-					>
-						<div
-							class="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.15)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.15)_50%,rgba(255,255,255,0.15)_75%,transparent_75%,transparent)] bg-[size:8px_8px] animate-pulse"
-						></div>
+				{#if timeLeft > 0}
+					<div class="flex items-center gap-4 text-zinc-300">
+						<div class="flex flex-col items-center">
+							<span class="text-2xl font-black text-primary font-mono"
+								>{time.days}</span
+							>
+							<span class="text-[9px] uppercase tracking-widest text-zinc-500"
+								>Days</span
+							>
+						</div>
+						<span class="text-xl text-zinc-700 font-black mb-4">:</span>
+						<div class="flex flex-col items-center">
+							<span class="text-2xl font-black text-zinc-100 font-mono"
+								>{time.hours}</span
+							>
+							<span class="text-[9px] uppercase tracking-widest text-zinc-500"
+								>Hrs</span
+							>
+						</div>
+						<span class="text-xl text-zinc-700 font-black mb-4">:</span>
+						<div class="flex flex-col items-center">
+							<span class="text-2xl font-black text-zinc-100 font-mono"
+								>{time.minutes}</span
+							>
+							<span class="text-[9px] uppercase tracking-widest text-zinc-500"
+								>Min</span
+							>
+						</div>
+						<span class="text-xl text-zinc-700 font-black mb-4">:</span>
+						<div class="flex flex-col items-center">
+							<span
+								class="text-2xl font-black text-zinc-100 font-mono animate-pulse"
+								>{time.seconds}</span
+							>
+							<span class="text-[9px] uppercase tracking-widest text-zinc-500"
+								>Sec</span
+							>
+						</div>
 					</div>
-				</div>
+				{:else}
+					<div
+						class="text-sm font-black text-primary uppercase tracking-wider animate-pulse"
+					>
+						ALCHEMIZE HAS STARTED!
+					</div>
+				{/if}
 			</div>
 
 			<a
