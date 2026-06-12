@@ -141,6 +141,7 @@ Signed by ${data.name}, T2 Reviewer
 	const areAllPushedToHQ = (log: Log[]): boolean => {
 		return log.every(entry => entry.submmitedToHQ || entry.status !== 1)
 	}
+	let pending = $state(false)
 </script>
 
 <main class="w-screen h-screen">
@@ -152,7 +153,7 @@ Signed by ${data.name}, T2 Reviewer
 			class="sidebar w-1/4 h-full rounded-2xl bg-black/20 border-2 overflow-y-auto p-2"
 		>
 			{#each airtableProjects as project}
-				{#if wasEverApproved(project) && !areAllPushedToHQ(JSON.parse(project.fields.log ?? "[]") as Log[])}
+				{#if wasEverApproved(project) && (!areAllPushedToHQ(JSON.parse(project.fields.log ?? "[]") as Log[]) !== pending)}
 					<button
 						onclick={() => setCurrentProject(project)}
 						class="project w-full border-b h-20 p-2 hover:bg-background rounded-t-2xl"
@@ -176,27 +177,18 @@ Signed by ${data.name}, T2 Reviewer
 			<nav class="top-bar flex bg-transparent gap-16 text-white">
 				<button
 					class="button w-34 bg-yellow-900 flex items-center justify-center py-2 rounded-full"
+					onclick={() => (pending = false)}
 				>
-					Pending (20)
-				</button>
-
-				<button
-					class="button w-34 bg-red-900 flex items-center justify-center py-2 rounded-full"
-				>
-					Rejected (5)
-				</button>
-
-				<button
-					class="button w-34 bg-green-900 flex items-center justify-center py-2 rounded-full"
-				>
-					Approved (15)
+					Pending
 				</button>
 
 				<button
 					class="button w-34 bg-blue-900 flex items-center justify-center py-2 rounded-full"
+					onclick={() => (pending = true)}
 				>
-					Total (40)
+					Sent
 				</button>
+
 			</nav>
 			<div
 				class="w-full h-full overflow-y-auto bg-background/40 border-2 rounded-2xl flex flex-col items-center justify-start gap-y-3 p-2"
