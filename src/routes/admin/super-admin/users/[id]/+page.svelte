@@ -9,6 +9,8 @@
 	let isT2Reviewer = $state(data.isT2Reviewer ?? false)
 	let isFulfiller = $state(data.isFulfiller ?? false)
 	let isSuperAdmin = $state(data.isSuperAdmin ?? false)
+	let isShopManager = $state(data.isShopManager ?? false)
+
 	let slackId = $state(data.slackId ?? "")
 	let nda = $state(data.nda ?? false)
 	let loading = $state(false)
@@ -20,6 +22,7 @@
 			isT2Reviewer,
 			isFulfiller,
 			isSuperAdmin,
+			isShopManager,
 			slackId,
 			nda,
 		}
@@ -126,7 +129,16 @@
 
 				<Switch bind:checked={isSuperAdmin} />
 			</div>
+			<div
+				class="flex items-center justify-between rounded-2xl px-4 py-3 transition hover:bg-white/5"
+			>
+				<div>
+					<p class="font-medium">Shop Manager</p>
+					<p class="text-sm text-zinc-400">Can manage shop items</p>
+				</div>
 
+				<Switch bind:checked={isShopManager} />
+			</div>
 			<div
 				class="flex items-center justify-between rounded-2xl px-4 py-3 transition hover:bg-white/5"
 			>

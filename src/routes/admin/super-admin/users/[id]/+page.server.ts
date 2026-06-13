@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                 isSuperAdmin: false,
                 isFulfiller: false,
                 isT2Reviewer: false,
-
+                isShopManager: false,
             }
         }
         let roles = adminData.records[0].fields.roles || ""
@@ -43,6 +43,7 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             isSuperAdmin: roles.includes("super_admin") || false,
             isFulfiller: roles.includes("fulfiller") || false,
             isT2Reviewer: roles.includes("t2_reviewer") || false,
+            isShopManager: roles.includes("shop_manager") || false,
             nda: adminData.records[0].fields.nda === "true"
         }
 }

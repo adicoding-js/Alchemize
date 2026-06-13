@@ -4,12 +4,13 @@ import {WebClient} from "@slack/web-api"
 import { ADMIN_JWT_SECRET, SLACK_BOT_TOKEN } from "$env/static/private"
 import jwt from "jsonwebtoken"
 const webClient = new WebClient(SLACK_BOT_TOKEN)
-const rolesToRoleString = (isReviewer:boolean, isSuperAdmin:boolean, isFulfiller:boolean, isT2Reviewer:boolean) => {
+const rolesToRoleString = (isReviewer:boolean, isSuperAdmin:boolean, isFulfiller:boolean, isT2Reviewer:boolean, isShopManager:boolean) => {
     let roles = ""
     if (isReviewer) roles += "reviewer,"
     if (isSuperAdmin) roles += "super_admin,"
     if (isFulfiller) roles += "fulfiller,"
     if (isT2Reviewer) roles += "t2_reviewer,"
+    if (isShopManager) roles += "shop_manager,"
     return roles
 }
 const getUserName = async (userId:string) => {
@@ -33,8 +34,8 @@ export const POST: RequestHandler = async ({request, cookies}) => {
         console.error("JWT verification failed:", error)
         return new Response(JSON.stringify({ok: false, error: "Forbidden"}), {status: 403})
     }
-    let {email, isReviewer, isSuperAdmin, isFulfiller, isT2Reviewer, slackId, nda} = data
-    const roles = rolesToRoleString(isReviewer, isSuperAdmin, isFulfiller, isT2Reviewer)
+    let {email, isReviewer, isSuperAdmin, isFulfiller, isT2Reviewer, isShopManager, slackId, nda} = data
+    const roles = rolesToRoleString(isReviewer, isSuperAdmin, isFulfiller, isT2Reviewer, isShopManager)
     const name = await getUserName(slackId)
     const result = await upsertAdmin(slackId, email, roles, name, nda)
     return new Response(JSON.stringify({ok: result.ok}), {status: result.ok ? 200 : 500})
