@@ -356,7 +356,36 @@ export const patchProjectForShip = async (projectId: string, log: Log[], status:
         };
     }
 };
-
+export const deleteProject = async (projectId: string, email: string): Promise<DBResponse> => {
+    try {
+        const deletedProject = await db
+            .delete(projectTable)
+            .where(and(eq(projectTable.id, parseInt(projectId)), eq(projectTable.owner, email)))
+            .returning();
+        if (deletedProject.length === 0) {
+            return {
+                ok: false,
+                status: 404,
+                json: async () => ({ message: "Project not found" }),
+                text: async () => JSON.stringify({ message: "Project not found" }),
+            };
+        }
+        return {
+            ok: true,
+            status: 200,
+            json: async () => ({ id: deletedProject[0].id + "", fields: deletedProject[0] } as airtableReplication),
+            text: async () => JSON.stringify({ id: deletedProject[0].id + "", fields: deletedProject[0] } as airtableReplication),
+        } as DBResponse;
+    } catch (error) {
+        console.error("Database write failed:", error);
+        return {
+            ok: false,
+            status: 500,
+            json: async () => ({ message: "Database update failed" }),
+            text: async () => JSON.stringify({ message: "Database update failed" }),
+        };
+    }
+};
 //Shop Functions
 export const createOrder = async (orderData: any): Promise<DBResponse> => {
     const { orderItem, itemID, qty, ordererEmail, ordererUid, status, fulfiller, moreData } = orderData

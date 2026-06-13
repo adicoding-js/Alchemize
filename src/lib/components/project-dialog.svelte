@@ -9,6 +9,7 @@
 	import type { AirtableProject } from "$lib/types"
 	import { countCharacters } from "$lib/utils"
 	import { toast } from "svelte-sonner"
+	import { Trash } from "lucide-svelte"
 
 	type Log = {
 		status: 0 | 1 | 2
@@ -43,6 +44,7 @@
 		onship,
 		showRotator = false,
 		invalidater,
+		onDelete,
 	}: {
 		open: boolean
 		mode: "create" | "update"
@@ -51,6 +53,7 @@
 		onship: (agr0: string) => void
 		showRotator?: boolean
 		invalidater?: () => void
+		onDelete: () => void
 	} = $props()
 
 	let name = $state("")
@@ -103,30 +106,38 @@
 		"flex h-10 w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-zinc-100"
 
 	let files: any = $state()
-	let fileinputPreview: any = $state('')
+	let fileinputPreview: any = $state("")
 	let hasFile = $derived(files && files.length > 0)
-	
+
 	$effect(() => {
 		if (files && files.length > 0) {
-			const file = files[0];
-			const objectUrl = URL.createObjectURL(file);
-			console.log("File input Link created dynamically:", objectUrl);
-			fileinputPreview = objectUrl;
-			
+			const file = files[0]
+			const objectUrl = URL.createObjectURL(file)
+			console.log("File input Link created dynamically:", objectUrl)
+			fileinputPreview = objectUrl
+
 			// Cleanup: revoke the URL when files change or component destroys
 			return () => {
-				URL.revokeObjectURL(objectUrl);
-			};
+				URL.revokeObjectURL(objectUrl)
+			}
 		} else {
-			fileinputPreview = '';
+			fileinputPreview = ""
 		}
 	})
 	let allFieldsFilled = $derived(
-		name && description && type && github && demo && hackatime && (mode === "update" || files?.length > 0) && descriptionCharCount >= 50 && (mode === "update" ? changelogCharCount >= 20 : true)
+		name &&
+			description &&
+			type &&
+			github &&
+			demo &&
+			hackatime &&
+			(mode === "update" || files?.length > 0) &&
+			descriptionCharCount >= 50 &&
+			(mode === "update" ? changelogCharCount >= 20 : true)
 	)
 </script>
 
-<Dialog.Root bind:open>
+<Dialog.Root bind:open >
 	<Dialog.Content
 		class="min-w-[85vw]  h-[90vh] max-h-[90vh] overflow-hidden flex flex-col border border-zinc-800 bg-zinc-950 text-zinc-50 p-0 gap-0 shadow-2xl"
 	>
@@ -395,7 +406,9 @@
 								<label
 									for="screenshot"
 									class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer border-zinc-800 hover:border-zinc-700 transition"
-									style={fileinputPreview ? `background-image: url('${fileinputPreview}'); background-size: contain; background-position: center; filter: backdrop-blur(2px);` : 'background-color: transparent;'}
+									style={fileinputPreview
+										? `background-image: url('${fileinputPreview}'); background-size: contain; background-position: center; filter: backdrop-blur(2px);`
+										: "background-color: transparent;"}
 								>
 									<div
 										class="flex flex-col items-center justify-center pt-3 pb-3"
@@ -417,7 +430,6 @@
 										required
 										class="hidden"
 										bind:files
-										
 									/>
 								</label>
 							</div>
@@ -545,6 +557,17 @@
 					<div
 						class="flex items-center justify-end gap-3 pt-4 border-t border-zinc-900"
 					>
+						{#if mode === "update"}
+						<Button
+							
+							type="button"
+							variant="destructive"
+							class="text-xs font-semibold uppercase tracking-wider "
+							onclick={onDelete}
+						>
+							<Trash/> Delete Project
+						</Button>
+						{/if}
 						<Button
 							type="button"
 							variant="ghost"

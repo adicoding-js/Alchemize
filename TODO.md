@@ -2,7 +2,7 @@
 PLEASE DON'T TOUCH MY TODO
 
 LOW PRIORITY LOL:
-[] Implement Project Deletion
+[x] Implement Project Deletion
 [] Implement Project Unship
 [] Polish t2 Review panel
 [x] Add the new Dashboard UI

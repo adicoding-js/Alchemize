@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Button from "$lib/components/ui/button/button.svelte"
 	import ProjectDialog from "$lib/components/project-dialog.svelte"
-
-	import { Plus, Clock, Image, ArrowUpRight, Blocks } from "lucide-svelte"
+	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js"
+	import { Plus, Clock, ArrowUpRight, Blocks } from "lucide-svelte"
 
 	import { invalidateAll } from "$app/navigation"
 	import { loaderStore } from "$lib/stores/loader"
@@ -46,8 +46,7 @@
 
 	let availableHacks = $derived(
 		hacks.filter(hack => {
-			const hackName = (hack.name ?? hack.project_name ?? hack.project ?? "")
-				
+			const hackName = hack.name ?? hack.project_name ?? hack.project ?? ""
 
 			return Boolean(hackName) && !usedHackatimes.has(hackName)
 		})
@@ -56,7 +55,7 @@
 	let hackSecondsByName = $derived(
 		new Map(
 			hacks.map(hack => [
-				(hack.name ?? hack.project_name ?? hack.project ?? ""),
+				hack.name ?? hack.project_name ?? hack.project ?? "",
 				hack.total_seconds ?? 0,
 			])
 		)
@@ -163,13 +162,68 @@
 			showRotator = false
 		}
 	}
+	let isDeleteDialogOpen = $state(false)
+	const onDelete = () => {
+		isDeleteDialogOpen = true
+	}
+	const deleteProject = async () => {
+		if (!projectBeingUpdated) return
+
+		showRotator = true
+
+		try {
+			const response = await fetch("/dashboard/projects/delete", {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					recordId: projectBeingUpdated.id,
+				}),
+				credentials: "include",
+			})
+
+			toast(
+				response.ok
+					? "Project deleted successfully!"
+					: `Error deleting project. Code: ${response.status} — contact @TheUtkarsh8939 on Slack`
+			)
+
+			if (response.ok) {
+				projects = projects.filter(p => p.id !== projectBeingUpdated?.id)
+				projectBeingUpdated = null
+				updateProjWindowOpened = false
+			}
+
+			await invalidateAll()
+		} finally {
+			showRotator = false
+			isDeleteDialogOpen = false
+		}
+	}
 </script>
-
+<div class="abosulte z-90">
+	<AlertDialog.Root open={isDeleteDialogOpen} onOpenChange={open => (isDeleteDialogOpen = open)} >
+ <AlertDialog.Content class="z-60 backdrop:blur-lg">
+  <AlertDialog.Header>
+   <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+   <AlertDialog.Description>
+    This action cannot be undone. This will permanently delete your Project
+    and remove the project from our servers.
+   </AlertDialog.Description>
+  </AlertDialog.Header>
+  <AlertDialog.Footer>
+   <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+   <AlertDialog.Action>
+	<button onclick={deleteProject}>Continue</button>
+   </AlertDialog.Action>
+  </AlertDialog.Footer>
+ </AlertDialog.Content>
+</AlertDialog.Root>
+</div>
 <main
-	class=" min-h-screen overflow-scroll  w-full bg-gradbg text-foreground p-6 md:p-10 font-mono tracking-wide selection:bg-primary selection:text-primary-foreground"
+	class=" min-h-screen overflow-scroll w-full bg-gradbg text-foreground p-6 md:p-10 font-mono tracking-wide selection:bg-primary selection:text-primary-foreground"
 >
-	
-
 	<div class="relative z-50 max-w-7xl mx-auto flex flex-col gap-8 h-screen">
 		<div
 			class="flex items-end justify-between border-b-2 pb-[clamp(5px,1vh,16px)] border-primary/30 h-[clamp(40px,8vh,80px)] mt-5"
@@ -195,7 +249,9 @@
 			</Button>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6 items-start max-h-9/10">
+		<div
+			class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start max-h-9/10"
+		>
 			{#each projects as project}
 				<div class="relative group">
 					<div
@@ -239,9 +295,7 @@
 									>
 										<Clock class="size-4 text-primary" />
 										{formatHours(
-											hackSecondsByName.get(
-												(project.fields.hackatime ?? "")
-											) ?? 0
+											hackSecondsByName.get(project.fields.hackatime ?? "") ?? 0
 										)}
 									</span>
 								</div>
@@ -317,17 +371,13 @@
 		</div>
 	</div>
 </main>
-<style>
-	.bg-gradbg{
-		background: linear-gradient(to bottom right, var(--color-neutral-950), #1a090c, #2e030f)
-	}
-</style>
 <ProjectDialog
 	bind:open={newProjWindowOpened}
 	mode="create"
 	{availableHacks}
 	{invalidater}
 	onship={() => {}}
+	onDelete={() => {}}
 />
 
 <ProjectDialog
@@ -338,4 +388,16 @@
 	onship={shipProject}
 	{showRotator}
 	{invalidater}
+	{onDelete}
 />
+
+<style>
+	.bg-gradbg {
+		background: linear-gradient(
+			to bottom right,
+			var(--color-neutral-950),
+			#1a090c,
+			#2e030f
+		);
+	}
+</style>
