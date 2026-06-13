@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Sidenav from "$lib/components/sidenav.svelte"
+	import Navigation from "$lib/components/navigation.svelte"
 	import { navigating } from "$app/stores"
 	import { page } from "$app/state"
 	import { browser } from "$app/environment"
@@ -34,7 +34,8 @@
 
 {#if $navigating || $loaderStore}
 	<div
-		class="fixed inset-0 bg-black/70 flex items-center justify-center z-80 backdrop-blur-none"	>
+		class="fixed inset-0 bg-black/70 flex items-center justify-center z-80 backdrop-blur-none"
+	>
 		<div class="flex flex-col items-center gap-4">
 			<div
 				class="w-12 h-12 border-4 border-gray-600 border-t-red-600 rounded-full animate-spin"
@@ -57,7 +58,7 @@
 {/if}
 <div class="root h-screen w-screen flex items-center justify-start text-white">
 	{#if !excludedRoutes.includes(page.url.pathname)}
-		<Sidenav />
+		<Navigation />
 	{/if}
 	{#if unVerified}
 		<div
@@ -68,7 +69,8 @@
 			<a
 				class="button w-60 h-20 flex items-center justify-center border border-dashed border-red-600 rounded-xl z-9999"
 				href={hackatimeAuthUrl}
-				target="_blank">
+				target="_blank"
+			>
 				Login Via Hackatime</a
 			>
 		</div>

@@ -84,52 +84,62 @@
 		<div class="gap-x-3 grid grid-cols-2 px-6">
 			{#each topNavItems as item}
 				<Dialog.Close>
-					<a href={item.href} class="group">
+					<div class="relative group">
 						<div
-							class="flex gap-1 hover:bg-red-950/20 p-4 border border-red-500/20 hover:border-red-500/60 rounded-lg transition-all items-center w-full"
-						>
-							<div class="p-2">
-								<item.icon class="w-6 h-6 text-chart-5" />
+							class="absolute inset-0 bg-primary/80 translate-x-[3px] translate-y-[3px] rounded-lg transition-transform -z-10"
+						></div>
+						<a href={item.href} class="group">
+							<div
+								class="relative flex gap-1 bg-zinc-950 p-4 border border-primary rounded-lg transition-all items-center w-full z-10 group-hover:translate-x-[2px] group-hover:translate-y-[2px]"
+							>
+								<div class="p-2">
+									<item.icon class="w-6 h-6 text-chart-5" />
+								</div>
+								<div class="flex flex-col items-start w-full">
+									<p class="font-semibold text-foreground text-lg">
+										{item.label}
+									</p>
+									<p
+										class={cn(
+											"text-muted-foreground text-xs text-left",
+											item.label === "Refer" && "text-[11px]"
+										)}
+									>
+										{item.description}
+									</p>
+								</div>
 							</div>
-							<div class="flex flex-col items-start w-full">
-								<p class="font-semibold text-foreground text-lg">
-									{item.label}
-								</p>
-								<p
-									class={cn(
-										"text-muted-foreground text-xs text-left",
-										item.label === "Refer" && "text-[11px]"
-									)}
-								>
-									{item.description}
-								</p>
-							</div>
-						</div>
-					</a>
+						</a>
+					</div>
 				</Dialog.Close>
 			{/each}
 		</div>
 		<div class="gap-3 grid grid-cols-3 px-6 pb-6">
 			{#each navItems as item}
 				<Dialog.Close>
-					<a href={item.href} class="group">
+					<div class="relative group">
 						<div
-							class="flex gap-1 hover:bg-red-950/20 p-4 border border-red-500/20 hover:border-red-500/60 rounded-lg transition-all"
-						>
-							<div class="p-2">
-								<item.icon class="w-6 h-6 text-chart-5" />
+							class="absolute inset-0 bg-primary/80 translate-x-[3px] translate-y-[3px] rounded-lg transition-transform -z-10"
+						></div>
+						<a href={item.href} class="group">
+							<div
+								class="relative flex gap-1 bg-zinc-950 p-4 border border-primary rounded-lg transition-all items-center w-full z-10 group-hover:translate-x-[2px] group-hover:translate-y-[2px]"
+							>
+								<div class="p-2">
+									<item.icon class="w-6 h-6 text-chart-5" />
+								</div>
+								<div class="flex flex-col items-start">
+									<p class="font-semibold text-foreground text-lg">
+										{item.label}
+									</p>
+									<p class="text-muted-foreground text-xs">
+										{item.description}
+									</p>
+								</div>
 							</div>
-							<div class="flex flex-col items-start">
-								<p class="font-semibold text-foreground text-lg">
-									{item.label}
-								</p>
-								<p class="text-muted-foreground text-xs">
-									{item.description}
-								</p>
-							</div>
-						</div>
-					</a>
-				</Dialog.Close>
+						</a>
+					</div></Dialog.Close
+				>
 			{/each}
 		</div>
 	</Dialog.Content>
