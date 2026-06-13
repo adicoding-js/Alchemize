@@ -121,6 +121,9 @@
 			fileinputPreview = '';
 		}
 	})
+	let allFieldsFilled = $derived(
+		name && description && type && github && demo && hackatime && (mode === "update" || files?.length > 0) && descriptionCharCount >= 50 && (mode === "update" ? changelogCharCount >= 20 : true)
+	)
 </script>
 
 <Dialog.Root bind:open>
@@ -552,6 +555,7 @@
 						</Button>
 						<Dialog.Close>
 							<Button
+								disabled={!allFieldsFilled || showSecondRotator || shipLoading}
 								type="submit"
 								class="bg-primary hover:bg-primary/80 text-white text-xs font-bold uppercase tracking-wider px-6 h-10 shadow-lg shadow-red-950/20"
 								onclick={() => {
