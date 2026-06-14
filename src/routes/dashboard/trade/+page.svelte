@@ -99,7 +99,7 @@
 					<!-- stone-1's card -->
 					<div class="relative h-25">
 						<div
-							class="absolute inset-0 bg-primary/40 translate-x-[4px] translate-y-[4px] rounded-xl"
+							class="absolute inset-0 bg-primary/40 translate-x-[2px] translate-y-[2px] rounded-xl"
 						></div>
 						<div
 							class="p-4 bg-zinc-950 border-2 border-primary/50 rounded-xl backdrop-blur-2xl flex items-center justify-between gap-x-4"
@@ -136,7 +136,7 @@
 					<!-- stone-2's card -->
 					<div class="relative h-25">
 						<div
-							class="absolute inset-0 bg-primary/40 translate-x-[4px] translate-y-[4px] rounded-xl"
+							class="absolute inset-0 bg-primary/40 translate-x-[2px] translate-y-[2px] rounded-xl"
 						></div>
 						<div
 							class="p-4 bg-zinc-950 border-2 border-primary/50 rounded-xl backdrop-blur-2xl flex items-center justify-between gap-x-4"
@@ -261,7 +261,7 @@
 				</h2>
 				<div class="relative w-full h-full">
 					<div
-						class="absolute inset-0 bg-primary/40 translate-x-[4px] translate-y-[4px] rounded-2xl -z-10"
+						class="absolute inset-0 bg-primary/40 translate-x-[2px] translate-y-[2px] rounded-2xl -z-10"
 					></div>
 					<div
 						class="h-full w-full bg-zinc-950 border-2 border-primary/50 rounded-2xl flex flex-col gap-y-4 items-center justify-between py-10 px-5 z-20"
